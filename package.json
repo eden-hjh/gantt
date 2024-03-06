@@ -39,13 +39,9 @@
     "react": "^18.0.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^14.2.1",
-    "@types/jest": "^27.5.1",
-    "@types/node": "^15.0.1",
-    "@types/react": "^18.0.5",
-    "@types/react-dom": "^18.0.5",
+    "@types/jest": "^29.5.12",
+    "@types/react-dom": "^18.2.19",
+    "classnames": "^2.5.1",
     "cross-env": "^7.0.3",
     "gh-pages": "^3.1.0",
     "microbundle-crl": "^0.13.11",
@@ -62,5 +58,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@types/react": "^18.2.57"
+  }
 }

@@ -20,10 +20,11 @@ export const convertToBarTasks = (
   projectBackgroundColor: string,
   projectBackgroundSelectedColor: string,
   milestoneBackgroundColor: string,
-  milestoneBackgroundSelectedColor: string
+  milestoneBackgroundSelectedColor: string,
 ) => {
+  let currentY = 0
   let barTasks = tasks.map((t, i) => {
-    return convertToBarTask(
+    const _task = convertToBarTask(
       t,
       i,
       dates,
@@ -42,8 +43,18 @@ export const convertToBarTasks = (
       projectBackgroundColor,
       projectBackgroundSelectedColor,
       milestoneBackgroundColor,
-      milestoneBackgroundSelectedColor
+      milestoneBackgroundSelectedColor,
+      currentY,
     );
+
+    // 如果有taskItems的时候，那么y要等于task的条数乘于行高
+    if(t.taskItems?.length) {
+      currentY += (t.taskItems || [])?.length * rowHeight; 
+    } else {
+      currentY += rowHeight; 
+    }
+    
+    return _task
   });
 
   // set dependencies
@@ -80,7 +91,8 @@ const convertToBarTask = (
   projectBackgroundColor: string,
   projectBackgroundSelectedColor: string,
   milestoneBackgroundColor: string,
-  milestoneBackgroundSelectedColor: string
+  milestoneBackgroundSelectedColor: string,
+  currentY: number
 ): BarTask => {
   let barTask: BarTask;
   switch (task.type) {
@@ -112,7 +124,8 @@ const convertToBarTask = (
         projectProgressColor,
         projectProgressSelectedColor,
         projectBackgroundColor,
-        projectBackgroundSelectedColor
+        projectBackgroundSelectedColor,
+        0
       );
       break;
     default:
@@ -129,7 +142,8 @@ const convertToBarTask = (
         barProgressColor,
         barProgressSelectedColor,
         barBackgroundColor,
-        barBackgroundSelectedColor
+        barBackgroundSelectedColor,
+        currentY,
       );
       break;
   }
@@ -149,29 +163,57 @@ const convertToBar = (
   barProgressColor: string,
   barProgressSelectedColor: string,
   barBackgroundColor: string,
-  barBackgroundSelectedColor: string
+  barBackgroundSelectedColor: string,
+  currentY: number,
 ): BarTask => {
+  // console.log('convertToBar', task, rtl)
   let x1: number;
   let x2: number;
+  // 用于添加x1、x2
+  let newTaskItems: any[] = []
+
+  const { taskItems = [] } = task
+  let typeInternal: TaskTypeInternal = task.type;
   if (rtl) {
     x2 = taskXCoordinateRTL(task.start, dates, columnWidth);
     x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
   } else {
+    if(taskItems.length > 0) {
+      taskItems.forEach((taskItemConfig, itemIndex) => {
+        x1 =  taskXCoordinate(taskItemConfig.start, dates, columnWidth),
+        x2 = taskXCoordinate(taskItemConfig.end, dates, columnWidth)
+
+        const [progressWidth, progressX] = progressWithByParams(
+          x1,
+          x2,
+          taskItemConfig.progress,
+          rtl
+        );
+
+        if (typeInternal === "task" && x2 - x1 < handleWidth * 2) {
+          typeInternal = "smalltask";
+          x2 = x1 + handleWidth * 2;
+        }
+
+        const topMargin = 12
+        const taskSpacing = 12 
+        const y = currentY + (itemIndex * taskHeight) + (itemIndex * taskSpacing) + topMargin;
+
+        newTaskItems.push({
+          ...taskItemConfig,
+          x1,
+          x2,
+          y,
+          progressWidth,
+          progressX,
+          typeInternal
+        })
+      });
+    }
     x1 = taskXCoordinate(task.start, dates, columnWidth);
     x2 = taskXCoordinate(task.end, dates, columnWidth);
   }
-  let typeInternal: TaskTypeInternal = task.type;
-  if (typeInternal === "task" && x2 - x1 < handleWidth * 2) {
-    typeInternal = "smalltask";
-    x2 = x1 + handleWidth * 2;
-  }
-
-  const [progressWidth, progressX] = progressWithByParams(
-    x1,
-    x2,
-    task.progress,
-    rtl
-  );
+  
   const y = taskYCoordinate(index, rowHeight, taskHeight);
   const hideChildren = task.type === "project" ? task.hideChildren : undefined;
 
@@ -189,14 +231,15 @@ const convertToBar = (
     x2,
     y,
     index,
-    progressX,
-    progressWidth,
+    progressX: 0,
+    progressWidth: 0,
     barCornerRadius,
     handleWidth,
     hideChildren,
     height: taskHeight,
     barChildren: [],
     styles,
+    taskItems: newTaskItems
   };
 };
 
@@ -388,7 +431,8 @@ export const handleTaskBySVGMouseEvent = (
   xStep: number,
   timeStep: number,
   initEventX1Delta: number,
-  rtl: boolean
+  rtl: boolean,
+  taskItemConfig?: any
 ): { isChanged: boolean; changedTask: BarTask } => {
   let result: { isChanged: boolean; changedTask: BarTask };
   switch (selectedTask.type) {
@@ -410,7 +454,8 @@ export const handleTaskBySVGMouseEvent = (
         xStep,
         timeStep,
         initEventX1Delta,
-        rtl
+        rtl,
+        taskItemConfig
       );
       break;
   }
@@ -424,9 +469,11 @@ const handleTaskBySVGMouseEventForBar = (
   xStep: number,
   timeStep: number,
   initEventX1Delta: number,
-  rtl: boolean
+  rtl: boolean,
+  taskItemConfig: any
 ): { isChanged: boolean; changedTask: BarTask } => {
-  const changedTask: BarTask = { ...selectedTask };
+  const changedTask: any = { ...selectedTask };
+  const changedTakItemConfig = { ...taskItemConfig }
   let isChanged = false;
   switch (action) {
     case "progress":
@@ -448,68 +495,86 @@ const handleTaskBySVGMouseEventForBar = (
       }
       break;
     case "start": {
-      const newX1 = startByX(svgX, xStep, selectedTask);
-      changedTask.x1 = newX1;
-      isChanged = changedTask.x1 !== selectedTask.x1;
+      const newX1 = startByX(svgX, xStep, taskItemConfig);
+      changedTakItemConfig.x1 = newX1;
+      isChanged = changedTakItemConfig.x1 !== taskItemConfig.x1;
       if (isChanged) {
         if (rtl) {
-          changedTask.end = dateByX(
+          changedTask[taskItemConfig.end] = dateByX(
             newX1,
-            selectedTask.x1,
-            selectedTask.end,
+            taskItemConfig.x1,
+            selectedTask[taskItemConfig.end],
             xStep,
             timeStep
           );
         } else {
-          changedTask.start = dateByX(
+          changedTask[taskItemConfig.start] = dateByX(
             newX1,
-            selectedTask.x1,
-            selectedTask.start,
+            taskItemConfig.x1,
+            selectedTask[taskItemConfig.start],
             xStep,
             timeStep
           );
         }
         const [progressWidth, progressX] = progressWithByParams(
-          changedTask.x1,
-          changedTask.x2,
-          changedTask.progress,
+          taskItemConfig.x1,
+          taskItemConfig.x2,
+          changedTask[taskItemConfig.progress],
           rtl
         );
-        changedTask.progressWidth = progressWidth;
-        changedTask.progressX = progressX;
+        changedTakItemConfig.progressWidth = progressWidth;
+        changedTakItemConfig.progressX = progressX;
+
+        changedTask.taskItems = selectedTask.taskItems?.map(item => {
+          if(item.id === changedTakItemConfig.id) {
+            return changedTakItemConfig
+          }
+
+          return item
+        })
       }
       break;
     }
     case "end": {
-      const newX2 = endByX(svgX, xStep, selectedTask);
-      changedTask.x2 = newX2;
-      isChanged = changedTask.x2 !== selectedTask.x2;
+      const newX2 = endByX(svgX, xStep, taskItemConfig);
+      changedTakItemConfig.x2 = newX2;
+      isChanged = changedTakItemConfig.x2 !== selectedTask.x2;
       if (isChanged) {
         if (rtl) {
-          changedTask.start = dateByX(
+          changedTask[taskItemConfig.start] = dateByX(
             newX2,
-            selectedTask.x2,
-            selectedTask.start,
+            taskItemConfig.x2,
+            selectedTask[taskItemConfig.start],
             xStep,
             timeStep
           );
         } else {
-          changedTask.end = dateByX(
+          changedTask[taskItemConfig.end] = dateByX(
             newX2,
-            selectedTask.x2,
-            selectedTask.end,
+            taskItemConfig.x2,
+            selectedTask[taskItemConfig.end],
             xStep,
             timeStep
           );
         }
         const [progressWidth, progressX] = progressWithByParams(
-          changedTask.x1,
-          changedTask.x2,
-          changedTask.progress,
+          taskItemConfig.x1,
+          taskItemConfig.x2,
+          changedTask[taskItemConfig.progress],
           rtl
         );
-        changedTask.progressWidth = progressWidth;
-        changedTask.progressX = progressX;
+        changedTakItemConfig.progressWidth = progressWidth;
+        changedTakItemConfig.progressX = progressX;
+
+        changedTask.taskItems = selectedTask.taskItems?.map(item => {
+          if(item.id === changedTakItemConfig.id) {
+            return changedTakItemConfig
+          }
+
+          return item
+        })
+
+        // console.log('changedTaskend', selectedTask, changedTask)
       }
       break;
     }

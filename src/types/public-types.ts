@@ -1,3 +1,5 @@
+import React from 'react'
+
 export enum ViewMode {
   Hour = "Hour",
   QuarterDay = "Quarter Day",
@@ -10,6 +12,23 @@ export enum ViewMode {
   Year = "Year",
 }
 export type TaskType = "task" | "milestone" | "project";
+export interface TaskItemType {
+  id: string;
+  type: TaskType;
+  name: string;
+  start: Date;
+  end: Date;
+  styles?: {
+    backgroundColor?: string;
+    backgroundSelectedColor?: string;
+    progressColor?: string;
+    progressSelectedColor?: string;
+  };
+  isDisabled?: boolean;
+  project?: string;
+  dependencies?: string[];
+  progress: number;
+}
 export interface Task {
   id: string;
   type: TaskType;
@@ -31,6 +50,7 @@ export interface Task {
   dependencies?: string[];
   hideChildren?: boolean;
   displayOrder?: number;
+  taskItems?: TaskItemType[]
 }
 
 export interface EventOption {
@@ -90,6 +110,7 @@ export interface StylingOption {
   columnWidth?: number;
   listCellWidth?: string;
   rowHeight?: number;
+  rowCount?: number;
   ganttHeight?: number;
   barCornerRadius?: number;
   handleWidth?: number;
@@ -140,6 +161,19 @@ export interface StylingOption {
   }>;
 }
 
+export interface TaskConfigOption {
+  id: string;
+  start?: 'string' | Date;
+  end?: 'string' | Date;
+  styles?: {
+    backgroundColor?: string;
+    backgroundSelectedColor?: string;
+    progressColor?: string;
+    progressSelectedColor?: string;
+  };
+}
+
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
-  tasks: Task[];
+  tasks: any[];
+  columns?: any[]; // 表格列配置
 }

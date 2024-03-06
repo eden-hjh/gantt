@@ -2,17 +2,7 @@ import { Task } from "../../dist/types/public-types";
 
 export function initTasks() {
   const currentDate = new Date();
-  const tasks: Task[] = [
-    {
-      start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-      end: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
-      name: "Some Project",
-      id: "ProjectSample",
-      progress: 25,
-      type: "project",
-      hideChildren: false,
-      displayOrder: 1,
-    },
+  const tasks: any[] = [
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
       end: new Date(
@@ -22,12 +12,39 @@ export function initTasks() {
         12,
         28
       ),
+      start1: new Date(currentDate.getFullYear(), currentDate.getMonth(), 6),
+      end1: new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 5,
+        8,
+        12,
+        28
+      ),
       name: "Idea",
       id: "Task 0",
       progress: 45,
       type: "task",
-      project: "ProjectSample",
       displayOrder: 2,
+      taskItems: [{
+        id: '1',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth(),2),
+        styles: {
+          backgroundColor: '#276ff5'
+        },
+        isDisabled: true
+      }, {
+        id: '2',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 4),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth() + 2,6),
+        styles: {
+          backgroundColor: '#ff991c'
+        },
+        isDisabled: true,
+        dependencies: []
+      }]
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 2),
@@ -37,8 +54,27 @@ export function initTasks() {
       progress: 25,
       dependencies: ["Task 0"],
       type: "task",
-      project: "ProjectSample",
       displayOrder: 3,
+      taskItems: [{
+        id: '3',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth(), 2),
+        styles: {
+          backgroundColor: '#276ff5'
+        },
+        isDisabled: true
+      }, {
+        id: '4',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth(),7),
+        styles: {
+          backgroundColor: '#ff991c'
+        },
+        isDisabled: true,
+        dependencies: []
+      }]
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 4),
@@ -48,8 +84,27 @@ export function initTasks() {
       progress: 10,
       dependencies: ["Task 1"],
       type: "task",
-      project: "ProjectSample",
       displayOrder: 4,
+      taskItems: [{
+        id: '5',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 4),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth()-1,20),
+        styles: {
+          backgroundColor: '#276ff5'
+        },
+        isDisabled: true
+      }, {
+        id: '6',
+        name: '', // 任务条上显示的名称
+        start: new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 8),
+        end: new Date(currentDate.getFullYear(),currentDate.getMonth(),6),
+        styles: {
+          backgroundColor: '#ff991c'
+        },
+        isDisabled: true,
+        dependencies: []
+      }]
     },
     {
       start: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
@@ -59,7 +114,6 @@ export function initTasks() {
       progress: 2,
       dependencies: ["Task 2"],
       type: "task",
-      project: "ProjectSample",
       displayOrder: 5,
     },
     {
@@ -81,7 +135,6 @@ export function initTasks() {
       progress: currentDate.getMonth(),
       type: "milestone",
       dependencies: ["Task 4"],
-      project: "ProjectSample",
       displayOrder: 7,
     },
     {

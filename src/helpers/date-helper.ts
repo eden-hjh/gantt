@@ -18,10 +18,12 @@ export const getCachedDateTimeFormat = (
 ): DateTimeFormat => {
   const key = JSON.stringify([locString, opts]);
   let dtf = intlDTCache[key];
+  
   if (!dtf) {
     dtf = new Intl.DateTimeFormat(locString, opts);
     intlDTCache[key] = dtf;
   }
+  // console.log('dtf',intlDTCache,  dtf)
   return dtf;
 };
 
@@ -69,6 +71,7 @@ export const startOfDate = (date: Date, scale: DateHelperScales) => {
   return newDate;
 };
 
+// 获取甘特图时间范围
 export const ganttDateRange = (
   tasks: Task[],
   viewMode: ViewMode,
@@ -76,14 +79,22 @@ export const ganttDateRange = (
 ) => {
   let newStartDate: Date = tasks[0].start;
   let newEndDate: Date = tasks[0].start;
+
+  // 获取最小和最大的时间
   for (const task of tasks) {
-    if (task.start < newStartDate) {
-      newStartDate = task.start;
-    }
-    if (task.end > newEndDate) {
-      newEndDate = task.end;
+    const { taskItems = []} = task
+    for(const taskItemConfig of taskItems) {
+      if (taskItemConfig.start < newStartDate) {
+        newStartDate = taskItemConfig.start;
+      }
+      if (taskItemConfig.end > newEndDate) {
+        newEndDate = taskItemConfig.end;
+      }
     }
   }
+
+  console.log('newEndDate start', newStartDate, newEndDate)
+  
   switch (viewMode) {
     case ViewMode.Year:
       newStartDate = addToDate(newStartDate, -1, "year");
@@ -116,8 +127,14 @@ export const ganttDateRange = (
     case ViewMode.Day:
       newStartDate = startOfDate(newStartDate, "day");
       newStartDate = addToDate(newStartDate, -1 * preStepsCount, "day");
+
+      const daysInMonth = getDaysInMonth(newEndDate.getMonth(), newEndDate.getFullYear())
+      const newEndDay = newEndDate.getDate()
+      // 用当前月份多少天，减去结束日期当天。用于渲染当月后续不足的天数
+      const apartDay = daysInMonth - newEndDay
+
       newEndDate = startOfDate(newEndDate, "day");
-      newEndDate = addToDate(newEndDate, 19, "day");
+      newEndDate = addToDate(newEndDate, apartDay + 1, "day");
       break;
     case ViewMode.QuarterDay:
       newStartDate = startOfDate(newStartDate, "day");
@@ -180,9 +197,16 @@ export const seedDates = (
   return dates;
 };
 
+export const getLocaleYear = (date: Date, locale: string) => {
+  let bottomValue = getCachedDateTimeFormat(locale, {
+    year: "numeric",
+  }).format(date);
+  return bottomValue;
+};
+
 export const getLocaleMonth = (date: Date, locale: string) => {
   let bottomValue = getCachedDateTimeFormat(locale, {
-    month: "long",
+    month: "2-digit",
   }).format(date);
   bottomValue = bottomValue.replace(
     bottomValue[0],
@@ -199,6 +223,7 @@ export const getLocalDayOfWeek = (
   let bottomValue = getCachedDateTimeFormat(locale, {
     weekday: format,
   }).format(date);
+  // console.log('getLocalDayOfWeek', bottomValue)
   bottomValue = bottomValue.replace(
     bottomValue[0],
     bottomValue[0].toLocaleUpperCase()
@@ -239,3 +264,7 @@ export const getWeekNumberISO8601 = (date: Date) => {
 export const getDaysInMonth = (month: number, year: number) => {
   return new Date(year, month + 1, 0).getDate();
 };
+
+export const getPaddedNumber = (num: number): string => {
+  return (num < 10 ? '0' : '') + num;
+}

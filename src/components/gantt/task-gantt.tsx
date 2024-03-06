@@ -1,7 +1,16 @@
+/*
+ * @Author: jianhang_he jianhang_he@kingdee.com
+ * @Date: 2024-02-20 16:05:14
+ * @LastEditors: jianhang_he jianhang_he@kingdee.com
+ * @LastEditTime: 2024-03-05 14:20:12
+ * @FilePath: \gantt-task-react\src\components\gantt\task-gantt.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React, { useRef, useEffect } from "react";
-import { GridProps, Grid } from "../grid/grid";
+import { GridProps, Grid, GridToday } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
+import classnames from 'classnames'
 import styles from "./gantt.module.css";
 
 export type TaskGanttProps = {
@@ -11,6 +20,7 @@ export type TaskGanttProps = {
   ganttHeight: number;
   scrollY: number;
   scrollX: number;
+  ganttFullHeight: number;
 };
 export const TaskGantt: React.FC<TaskGanttProps> = ({
   gridProps,
@@ -19,6 +29,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
   ganttHeight,
   scrollY,
   scrollX,
+  ganttFullHeight
 }) => {
   const ganttSVGRef = useRef<SVGSVGElement>(null);
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
@@ -53,7 +64,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
       </svg>
       <div
         ref={horizontalContainerRef}
-        className={styles.horizontalContainer}
+        className={classnames(styles.horizontalContainer, styles.gantt_table)}
         style={
           ganttHeight
             ? { height: ganttHeight, width: gridProps.svgWidth }
@@ -63,12 +74,13 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={gridProps.svgWidth}
-          height={barProps.rowHeight * barProps.tasks.length}
+          height={ganttFullHeight}
           fontFamily={barProps.fontFamily}
           ref={ganttSVGRef}
         >
           <Grid {...gridProps} />
           <TaskGanttContent {...newBarProps} />
+          <GridToday {...gridProps} />
         </svg>
       </div>
     </div>

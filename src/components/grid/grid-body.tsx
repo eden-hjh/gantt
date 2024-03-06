@@ -11,6 +11,7 @@ export type GridBodyProps = {
   columnWidth: number;
   todayColor: string;
   rtl: boolean;
+  rowCount?: number;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
@@ -18,8 +19,8 @@ export const GridBody: React.FC<GridBodyProps> = ({
   rowHeight,
   svgWidth,
   columnWidth,
-  todayColor,
-  rtl,
+  // todayColor,
+  // rtl
 }) => {
   let y = 0;
   const gridRows: ReactChild[] = [];
@@ -34,33 +35,38 @@ export const GridBody: React.FC<GridBodyProps> = ({
     />,
   ];
   for (const task of tasks) {
+    const taskItemCount = task.taskItems?.length || 1
     gridRows.push(
       <rect
         key={"Row" + task.id}
         x="0"
         y={y}
         width={svgWidth}
-        height={rowHeight}
+        height={rowHeight * taskItemCount}
         className={styles.gridRow}
+        onMouseEnter={e => {
+          console.log('mouse enter', task, e)
+        }}
+        onMouseLeave={e => {
+          console.log('mouse leave', task, e)
+        }}
       />
     );
+    y += (rowHeight * taskItemCount);
     rowLines.push(
       <line
         key={"RowLine" + task.id}
         x="0"
-        y1={y + rowHeight}
+        y1={y}
         x2={svgWidth}
-        y2={y + rowHeight}
+        y2={y}
         className={styles.gridRowLine}
       />
     );
-    y += rowHeight;
   }
 
-  const now = new Date();
   let tickX = 0;
   const ticks: ReactChild[] = [];
-  let today: ReactChild = <rect />;
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
     ticks.push(
@@ -73,6 +79,38 @@ export const GridBody: React.FC<GridBodyProps> = ({
         className={styles.gridTick}
       />
     );
+    tickX += columnWidth;
+  }
+  return (
+    <g className="gridBody">
+      <g className="rows">{gridRows}</g>
+      <g className="rowLines">{rowLines}</g>
+      <g className="ticks">{ticks}</g>
+      {/* <g className="today">{today}</g> */}
+    </g>
+  );
+};
+
+export const GridBodyToday: React.FC<GridBodyProps> = ({
+  tasks,
+  dates,
+  columnWidth,
+  todayColor,
+  rowHeight,
+  rtl
+}) => {
+  let y = 0;
+
+  for (const task of tasks) {
+    const taskItemCount = task.taskItems?.length || 1
+    y += (rowHeight * taskItemCount);
+  }
+
+  const now = new Date();
+  let tickX = 0;
+  let today: ReactChild = <rect />;
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
     if (
       (i + 1 !== dates.length &&
         date.getTime() < now.getTime() &&
@@ -89,11 +127,11 @@ export const GridBody: React.FC<GridBodyProps> = ({
     ) {
       today = (
         <rect
-          x={tickX}
+          x={tickX + columnWidth/2}
           y={0}
-          width={columnWidth}
+          width={1}
           height={y}
-          fill={todayColor}
+          fill='#FF5F1F'
         />
       );
     }
@@ -117,11 +155,6 @@ export const GridBody: React.FC<GridBodyProps> = ({
     tickX += columnWidth;
   }
   return (
-    <g className="gridBody">
-      <g className="rows">{gridRows}</g>
-      <g className="rowLines">{rowLines}</g>
-      <g className="ticks">{ticks}</g>
-      <g className="today">{today}</g>
-    </g>
+    <g className="today">{today}</g>
   );
-};
+}

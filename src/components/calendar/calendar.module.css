@@ -7,15 +7,27 @@
   -ms-user-select: none;
   user-select: none;
   pointer-events: none;
+  
+  width: 44px;
+  height: 44px;
+}
+
+.calendarBottomText_day {
+  fill: #212121;
+}
+
+.calendarBottomText_weekday {
+  fill: #666666;
+  font-size: 12px;
 }
 
 .calendarTopTick {
-  stroke: #e6e4e4;
+  stroke: #d9d9d9;
 }
 
 .calendarTopText {
   text-anchor: middle;
-  fill: #555;
+  fill: #212121;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -25,7 +37,7 @@
 }
 
 .calendarHeader {
-  fill: #ffffff;
-  stroke: #e0e0e0;
-  stroke-width: 1.4;
+  fill: #fafafa;
+  stroke: #d9d9d9;
+  stroke-width: 1;
 }

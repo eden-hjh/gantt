@@ -1,13 +1,13 @@
 .ganttTable {
   display: table;
-  border-bottom: #e6e4e4 1px solid;
-  border-top: #e6e4e4 1px solid;
-  border-left: #e6e4e4 1px solid;
+  border: #D9D9D9 1px solid;
+  font-weight: 600;
 }
 
 .ganttTable_Header {
   display: table-row;
   list-style: none;
+  background: #FAFAFA;
 }
 
 .ganttTable_HeaderSeparator {
@@ -20,4 +20,9 @@
   display: table-cell;
   vertical-align: -webkit-baseline-middle;
   vertical-align: middle;
+  padding-left: 12px;
+}
+
+.ganttTable_HeaderItem:not(:last-child) {
+  border-right: #D9D9D9 1px solid;
 }

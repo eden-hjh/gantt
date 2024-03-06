@@ -11,6 +11,10 @@
   overflow: hidden;
 }
 
+.gantt_table {
+  border-bottom: 1px solid #e5e5e5;
+}
+
 .wrapper {
   display: flex;
   padding: 0;

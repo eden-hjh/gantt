@@ -26,16 +26,17 @@ import styles from "./gantt.module.css";
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
-  headerHeight = 50,
-  columnWidth = 60,
+  headerHeight = 88,
+  // columnWidth = 44,
   listCellWidth = "155px",
-  rowHeight = 50,
+  rowHeight = 44,
+  rowCount = 1,
   ganttHeight = 0,
   viewMode = ViewMode.Day,
   preStepsCount = 1,
-  locale = "en-GB",
+  locale = "zh-CN",
   barFill = 60,
-  barCornerRadius = 3,
+  barCornerRadius = 4,
   barProgressColor = "#a3a3ff",
   barProgressSelectedColor = "#8282f5",
   barBackgroundColor = "#b8c2cc",
@@ -91,8 +92,30 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const [selectedTask, setSelectedTask] = useState<BarTask>();
   const [failedTask, setFailedTask] = useState<BarTask | null>(null);
 
+  let columnWidth = 44;
+  if (viewMode === ViewMode.Year) {
+    columnWidth = 365;
+  } else if (viewMode === ViewMode.Month) {
+    columnWidth = 248;
+  } else if (viewMode === ViewMode.Week) {
+    columnWidth = 168;
+  }
+
   const svgWidth = dateSetup.dates.length * columnWidth;
-  const ganttFullHeight = barTasks.length * rowHeight;
+  const ganttFullHeight = useMemo(() => {
+    const _fullHeight =  barTasks.reduce((pre, curTask) => {
+      if(curTask.taskItems?.length) {
+        pre += curTask.taskItems?.length * rowHeight
+      } else {
+        pre += rowHeight
+      }
+
+      return pre
+    }, 0)
+    console.log('_fullHeight', _fullHeight, barTasks.length * rowHeight)
+    return _fullHeight
+    return barTasks.length * rowHeight;
+  }, [barTasks, rowHeight])
 
   const [scrollY, setScrollY] = useState(0);
   const [scrollX, setScrollX] = useState(-1);
@@ -120,6 +143,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
       }
     }
     setDateSetup({ dates: newDates, viewMode });
+    // console.log('filteredTasks', filteredTasks)
     setBarTasks(
       convertToBarTasks(
         filteredTasks,
@@ -196,7 +220,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   ]);
 
   useEffect(() => {
-    const { changedTask, action } = ganttEvent;
+    const { changedTask, action, taskItemConfig } = ganttEvent;
     if (changedTask) {
       if (action === "delete") {
         setGanttEvent({ action: "" });
@@ -210,9 +234,9 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         const prevStateTask = barTasks.find(t => t.id === changedTask.id);
         if (
           prevStateTask &&
-          (prevStateTask.start.getTime() !== changedTask.start.getTime() ||
-            prevStateTask.end.getTime() !== changedTask.end.getTime() ||
-            prevStateTask.progress !== changedTask.progress)
+          (taskItemConfig && prevStateTask[taskItemConfig.start].getTime() !== changedTask[taskItemConfig.start].getTime() ||
+            prevStateTask[taskItemConfig.end].getTime() !== changedTask[taskItemConfig.end].getTime() ||
+            prevStateTask[taskItemConfig.progress] !== changedTask[taskItemConfig.progress])
         ) {
           // actions for change
           const newTaskList = barTasks.map(t =>
@@ -392,6 +416,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     svgWidth,
     tasks: tasks,
     rowHeight,
+    rowCount,
     dates: dateSetup.dates,
     todayColor,
     rtl,
@@ -412,6 +437,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     ganttEvent,
     selectedTask,
     rowHeight,
+    rowCount,
     taskHeight,
     columnWidth,
     arrowColor,
@@ -433,6 +459,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
   const tableProps: TaskListProps = {
     rowHeight,
+    rowCount,
     rowWidth: listCellWidth,
     fontFamily,
     fontSize,
@@ -465,6 +492,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
           ganttHeight={ganttHeight}
           scrollY={scrollY}
           scrollX={scrollX}
+          ganttFullHeight={ganttFullHeight}
         />
         {ganttEvent.changedTask && (
           <Tooltip

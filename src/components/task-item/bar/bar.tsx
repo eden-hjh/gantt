@@ -13,24 +13,29 @@ export const Bar: React.FC<TaskItemProps> = ({
   rtl,
   onEventStart,
   isSelected,
+  taskItemConfig
 }) => {
   const progressPoint = getProgressPoint(
-    +!rtl * task.progressWidth + task.progressX,
+    +!rtl * taskItemConfig.progressWidth + taskItemConfig.progressX,
     task.y,
     task.height
   );
   const handleHeight = task.height - 2;
+
+  const barDisplaystyles = { ...task.styles, ...taskItemConfig.styles}
+  console.log('styles', taskItemConfig, barDisplaystyles, task.styles, taskItemConfig.styles)
+
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
-        x={task.x1}
-        y={task.y}
-        width={task.x2 - task.x1}
+        x={taskItemConfig.x1}
+        y={taskItemConfig.y}
+        width={taskItemConfig.x2 - taskItemConfig.x1}
         height={task.height}
-        progressX={task.progressX}
-        progressWidth={task.progressWidth}
+        progressX={taskItemConfig.progressX}
+        progressWidth={taskItemConfig.progressWidth}
         barCornerRadius={task.barCornerRadius}
-        styles={task.styles}
+        styles={{ ...task.styles, ...taskItemConfig.styles}}
         isSelected={isSelected}
         onMouseDown={e => {
           isDateChangeable && onEventStart("move", task, e);
@@ -41,24 +46,24 @@ export const Bar: React.FC<TaskItemProps> = ({
           <g>
             {/* left */}
             <BarDateHandle
-              x={task.x1 + 1}
+              x={taskItemConfig.x1 + 1}
               y={task.y + 1}
               width={task.handleWidth}
               height={handleHeight}
               barCornerRadius={task.barCornerRadius}
               onMouseDown={e => {
-                onEventStart("start", task, e);
+                onEventStart("start", task, e, taskItemConfig);
               }}
             />
             {/* right */}
             <BarDateHandle
-              x={task.x2 - task.handleWidth - 1}
+              x={taskItemConfig.x2 - task.handleWidth - 1}
               y={task.y + 1}
               width={task.handleWidth}
               height={handleHeight}
               barCornerRadius={task.barCornerRadius}
               onMouseDown={e => {
-                onEventStart("end", task, e);
+                onEventStart("end", task, e, taskItemConfig);
               }}
             />
           </g>

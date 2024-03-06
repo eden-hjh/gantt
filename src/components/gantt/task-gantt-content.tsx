@@ -1,7 +1,15 @@
+/*
+ * @Author: jianhang_he jianhang_he@kingdee.com
+ * @Date: 2024-02-20 16:05:14
+ * @LastEditors: jianhang_he jianhang_he@kingdee.com
+ * @LastEditTime: 2024-03-06 13:45:32
+ * @FilePath: \gantt-task-react\src\components\gantt\task-gantt-content.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React, { useEffect, useState } from "react";
 import { EventOption } from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
-import { Arrow } from "../other/arrow";
+// import { Arrow } from "../other/arrow";
 import { handleTaskBySVGMouseEvent } from "../../helpers/bar-helper";
 import { isKeyboardEvent } from "../../helpers/other-helper";
 import { TaskItem } from "../task-item/task-item";
@@ -17,6 +25,7 @@ export type TaskGanttContentProps = {
   ganttEvent: GanttEvent;
   selectedTask: BarTask | undefined;
   rowHeight: number;
+  rowCount?: number;
   columnWidth: number;
   timeStep: number;
   svg?: React.RefObject<SVGSVGElement>;
@@ -37,12 +46,12 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   dates,
   ganttEvent,
   selectedTask,
-  rowHeight,
+  // rowHeight,
   columnWidth,
   timeStep,
   svg,
   taskHeight,
-  arrowColor,
+  // arrowColor,
   arrowIndent,
   fontFamily,
   fontSize,
@@ -89,15 +98,16 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         xStep,
         timeStep,
         initEventX1Delta,
-        rtl
+        rtl,
+        ganttEvent.taskItemConfig,
       );
       if (isChanged) {
-        setGanttEvent({ action: ganttEvent.action, changedTask });
+        setGanttEvent({ action: ganttEvent.action, changedTask, taskItemConfig: ganttEvent.taskItemConfig });
       }
     };
 
     const handleMouseUp = async (event: MouseEvent) => {
-      const { action, originalSelectedTask, changedTask } = ganttEvent;
+      const { action, originalSelectedTask, changedTask, taskItemConfig } = ganttEvent;
       if (!changedTask || !point || !svg?.current || !originalSelectedTask)
         return;
       event.preventDefault();
@@ -113,7 +123,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         xStep,
         timeStep,
         initEventX1Delta,
-        rtl
+        rtl,
+        taskItemConfig
       );
 
       const isNotLikeOriginal =
@@ -198,7 +209,8 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
   const handleBarEventStart = async (
     action: GanttContentMoveAction,
     task: BarTask,
-    event?: React.MouseEvent | React.KeyboardEvent
+    event?: React.MouseEvent | React.KeyboardEvent,
+    taskItemConfig?: any 
   ) => {
     if (!event) {
       if (action === "select") {
@@ -256,13 +268,14 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         action,
         changedTask: task,
         originalSelectedTask: task,
+        taskItemConfig
       });
     }
   };
 
   return (
     <g className="content">
-      <g className="arrows" fill={arrowColor} stroke={arrowColor}>
+      {/* <g className="arrows" fill={arrowColor} stroke={arrowColor}>
         {tasks.map(task => {
           return task.barChildren.map(child => {
             return (
@@ -278,22 +291,33 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
             );
           });
         })}
-      </g>
+      </g> */}
       <g className="bar" fontFamily={fontFamily} fontSize={fontSize}>
         {tasks.map(task => {
+          // console.log('task.id', task.y, task, taskHeight)
           return (
-            <TaskItem
-              task={task}
-              arrowIndent={arrowIndent}
-              taskHeight={taskHeight}
-              isProgressChangeable={!!onProgressChange && !task.isDisabled}
-              isDateChangeable={!!onDateChange && !task.isDisabled}
-              isDelete={!task.isDisabled}
-              onEventStart={handleBarEventStart}
-              key={task.id}
-              isSelected={!!selectedTask && task.id === selectedTask.id}
-              rtl={rtl}
-            />
+            <g key={task.id}>
+              {
+                task.taskItems?.map((taskItem, index) => {
+                  const newTask = { ...task, y: task.y + index * (taskHeight + 10) }
+                  const _taskItem = { ...taskItem }
+                  return (
+                    <TaskItem
+                      task={newTask}
+                      taskItemConfig={_taskItem}
+                      arrowIndent={arrowIndent}
+                      taskHeight={taskHeight}
+                      isProgressChangeable={!!onProgressChange && !taskItem.isDisabled}
+                      isDateChangeable={!!onDateChange && !taskItem.isDisabled}
+                      isDelete={!taskItem.isDisabled}
+                      onEventStart={handleBarEventStart}
+                      isSelected={!!selectedTask && task.id === selectedTask.id}
+                      rtl={rtl}
+                    />
+                  )
+                })
+              }
+            </g>
           );
         })}
       </g>
