@@ -150,6 +150,13 @@ export function initTasks() {
   return tasks;
 }
 
+export const columns = [
+  // { code: 'No', name: '序号', width: 60, align: 'center' },
+  { code: 'name', name: '名称', width: 200 },
+  { code: 'start', name: '开始时间', width: 200 },
+  { code: 'end', name: '结束时间', width: 200 }
+]
+
 export function getStartEndDateForProject(tasks: Task[], projectId: string) {
   const projectTasks = tasks.filter(t => t.project === projectId);
   let start = projectTasks[0].start;

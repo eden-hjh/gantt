@@ -1,7 +1,7 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
-import { getStartEndDateForProject, initTasks } from "./helper";
+import { getStartEndDateForProject, initTasks, columns } from "./helper";
 import "gantt-task-react/dist/index.css";
 
 // Init
@@ -102,7 +102,7 @@ const App = () => {
         listCellWidth={isChecked ? "155px" : ""}
         ganttHeight={400}
         columnWidth={columnWidth}
-        columns={[]}
+        columns={columns}
         tasksConfig={[]}
       />
     </div>

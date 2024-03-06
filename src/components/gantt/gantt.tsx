@@ -22,10 +22,12 @@ import { GanttEvent } from "../../types/gantt-task-actions";
 import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
 import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
+// import classnames from 'classnames'
 import styles from "./gantt.module.css";
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
+  columns,
   headerHeight = 88,
   // columnWidth = 44,
   listCellWidth = "155px",
@@ -468,13 +470,14 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     headerHeight,
     scrollY,
     ganttHeight,
-    horizontalContainerClass: styles.horizontalContainer,
+    horizontalContainerClass: styles.task_horizontalContainer,
     selectedTask,
     taskListRef,
     setSelectedTask: handleSelectedTask,
     onExpanderClick: handleExpanderClick,
     TaskListHeader,
     TaskListTable,
+    columns
   };
   return (
     <div>

@@ -6,7 +6,8 @@ export const TaskListHeaderDefault: React.FC<{
   rowWidth: string;
   fontFamily: string;
   fontSize: string;
-}> = ({ headerHeight, fontFamily, fontSize, rowWidth }) => {
+  columns: any[]
+}> = ({ headerHeight, fontFamily, fontSize, rowWidth, columns }) => {
   return (
     <div
       className={styles.ganttTable}
@@ -21,14 +22,35 @@ export const TaskListHeaderDefault: React.FC<{
           height: headerHeight - 2,
         }}
       >
-        <div
+        {
+          columns?.map((column) => {
+            const {
+              code,
+              name,
+              width
+            } = column || {}
+            return (
+              <div
+                key={code}
+                className={styles.ganttTable_HeaderItem}
+                style={{
+                  width: width || 200,
+                  minWidth: rowWidth,
+                }}
+              >
+                {name}
+              </div>
+            )
+          })
+        }
+        {/* <div
           className={styles.ganttTable_HeaderItem}
           style={{
             minWidth: rowWidth,
           }}
         >
           &nbsp;Name
-        </div>
+        </div> */}
         {/* <div
           className={styles.ganttTable_HeaderSeparator}
           style={{
@@ -36,14 +58,14 @@ export const TaskListHeaderDefault: React.FC<{
             marginTop: headerHeight * 0.2,
           }}
         /> */}
-        <div
+        {/* <div
           className={styles.ganttTable_HeaderItem}
           style={{
             minWidth: rowWidth,
           }}
         >
           &nbsp;From
-        </div>
+        </div> */}
         {/* <div
           className={styles.ganttTable_HeaderSeparator}
           style={{
@@ -51,14 +73,14 @@ export const TaskListHeaderDefault: React.FC<{
             marginTop: headerHeight * 0.25,
           }}
         /> */}
-        <div
+        {/* <div
           className={styles.ganttTable_HeaderItem}
           style={{
             minWidth: rowWidth,
           }}
         >
           &nbsp;To
-        </div>
+        </div> */}
       </div>
     </div>
   );

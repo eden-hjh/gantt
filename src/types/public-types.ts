@@ -175,5 +175,5 @@ export interface TaskConfigOption {
 
 export interface GanttProps extends EventOption, DisplayOption, StylingOption {
   tasks: any[];
-  columns?: any[]; // 表格列配置
+  columns: any[]; // 表格列配置
 }

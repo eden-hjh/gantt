@@ -10,7 +10,6 @@ import React, { useRef, useEffect } from "react";
 import { GridProps, Grid, GridToday } from "../grid/grid";
 import { CalendarProps, Calendar } from "../calendar/calendar";
 import { TaskGanttContentProps, TaskGanttContent } from "./task-gantt-content";
-import classnames from 'classnames'
 import styles from "./gantt.module.css";
 
 export type TaskGanttProps = {
@@ -64,7 +63,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
       </svg>
       <div
         ref={horizontalContainerRef}
-        className={classnames(styles.horizontalContainer, styles.gantt_table)}
+        className={styles.horizontalContainer}
         style={
           ganttHeight
             ? { height: ganttHeight, width: gridProps.svgWidth }
