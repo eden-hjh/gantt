@@ -2,6 +2,12 @@ import React, { ReactChild } from "react";
 import { Task } from "../../types/public-types";
 import { addToDate } from "../../helpers/date-helper";
 import styles from "./grid.module.css";
+import {
+  GanttEvent,
+  GanttContentMoveAction
+} from "../../types/gantt-task-actions";
+import classnames from 'classnames'
+// import { BarTask } from "../../types/bar-task";
 
 export type GridBodyProps = {
   tasks: Task[];
@@ -12,6 +18,8 @@ export type GridBodyProps = {
   todayColor: string;
   rtl: boolean;
   rowCount?: number;
+  ganttEvent: GanttEvent;
+  setGanttEvent: (value: GanttEvent) => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
@@ -20,8 +28,28 @@ export const GridBody: React.FC<GridBodyProps> = ({
   svgWidth,
   columnWidth,
   // todayColor,
-  // rtl
+  // rtl,
+  ganttEvent,
+  setGanttEvent
 }) => {
+  const onEventStart = (
+    action: GanttContentMoveAction,
+    task: any
+  ) => {
+    if (action === "row_mouseenter") {
+      if (!ganttEvent.action || ganttEvent.action === 'row_mouseenter') {
+        setGanttEvent({
+          action,
+          hoverTask: task
+        });
+      }
+    } else if (action === "row_mouseleave") {
+      if (ganttEvent.action === "row_mouseenter" && ganttEvent.hoverTask?.id === task.id) {
+        setGanttEvent({ action: "", hoverTask: undefined });
+      }
+    }
+  }
+
   let y = 0;
   const gridRows: ReactChild[] = [];
   const rowLines: ReactChild[] = [
@@ -43,12 +71,14 @@ export const GridBody: React.FC<GridBodyProps> = ({
         y={y}
         width={svgWidth}
         height={rowHeight * taskItemCount}
-        className={styles.gridRow}
-        onMouseEnter={e => {
-          console.log('mouse enter', task, e)
+        className={classnames(styles.gridRow, {
+          [styles.gridRow_hover]: task.id === ganttEvent.hoverTask?.id
+        })}
+        onMouseEnter={() => {
+          onEventStart("row_mouseenter", task);
         }}
-        onMouseLeave={e => {
-          console.log('mouse leave', task, e)
+        onMouseLeave={() => {
+          onEventStart("row_mouseleave", task);
         }}
       />
     );
@@ -84,7 +114,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
   return (
     <g className="gridBody">
       <g className="rows">{gridRows}</g>
-      <g className="rowLines">{rowLines}</g>
+      {/* <g className="rowLines">{rowLines}</g> */}
       <g className="ticks">{ticks}</g>
       {/* <g className="today">{today}</g> */}
     </g>

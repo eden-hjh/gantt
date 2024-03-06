@@ -93,6 +93,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
   const [selectedTask, setSelectedTask] = useState<BarTask>();
   const [failedTask, setFailedTask] = useState<BarTask | null>(null);
+  // const [hoverTask, setHoverTask] = useState<BarTask>();
 
   let columnWidth = 44;
   if (viewMode === ViewMode.Year) {
@@ -114,7 +115,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
       return pre
     }, 0)
-    console.log('_fullHeight', _fullHeight, barTasks.length * rowHeight)
+    // console.log('_fullHeight', _fullHeight, barTasks.length * rowHeight)
     return _fullHeight
     return barTasks.length * rowHeight;
   }, [barTasks, rowHeight])
@@ -246,7 +247,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
           );
           setBarTasks(newTaskList);
         }
-      }
+      } 
     }
   }, [ganttEvent, barTasks]);
 
@@ -414,6 +415,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
   const gridProps: GridProps = {
+    ganttEvent,
     columnWidth,
     svgWidth,
     tasks: tasks,
@@ -422,6 +424,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     dates: dateSetup.dates,
     todayColor,
     rtl,
+    setGanttEvent
   };
   const calendarProps: CalendarProps = {
     dateSetup,
@@ -477,7 +480,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     onExpanderClick: handleExpanderClick,
     TaskListHeader,
     TaskListTable,
-    columns
+    columns,
+    ganttEvent
   };
   return (
     <div>

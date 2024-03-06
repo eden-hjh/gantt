@@ -1,4 +1,5 @@
 import React from 'react'
+import { GanttEvent } from './gantt-task-actions'
 
 export enum ViewMode {
   Hour = "Hour",
@@ -146,8 +147,9 @@ export interface StylingOption {
     fontSize: string;
   }>;
   TaskListTable?: React.FC<{
+    columns: any[];
     rowHeight: number;
-    rowWidth: string;
+    rowCount?: number;
     fontFamily: string;
     fontSize: string;
     locale: string;
@@ -156,6 +158,7 @@ export interface StylingOption {
     /**
      * Sets selected task by id
      */
+     ganttEvent: GanttEvent;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
   }>;

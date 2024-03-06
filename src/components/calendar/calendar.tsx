@@ -220,7 +220,7 @@ export const Calendar: React.FC<CalendarProps> = ({
     const bottomValues: ReactChild[] = [];
     const topDefaultHeight = headerHeight * 0.35;
     const dates = dateSetup.dates;
-    console.log('getCalendarValuesForDay listdate')
+    // console.log('getCalendarValuesForDay listdate')
     let curMonth 
     for (let i = 0; i < dates.length; i++) {
       const date = dates[i];
@@ -297,7 +297,7 @@ export const Calendar: React.FC<CalendarProps> = ({
         );
       }
 
-      console.log('listdate topValues', topValues)
+      // console.log('listdate topValues', topValues)
     }
     return [topValues, bottomValues];
   };

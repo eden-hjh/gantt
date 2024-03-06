@@ -9,6 +9,8 @@
 import React from "react";
 import styles from "./task-list-table.module.css";
 import { Task } from "../../types/public-types";
+import { GanttEvent } from "../../types/gantt-task-actions";
+import classnames from 'classnames'
 
 // const localeDateStringCache = {};
 // const toLocaleDateStringFactory =
@@ -39,6 +41,7 @@ export const TaskListTableDefault: React.FC<{
   locale: string;
   tasks: Task[];
   selectedTaskId: string;
+  ganttEvent: GanttEvent;
   setSelectedTask: (taskId: string) => void;
   onExpanderClick: (task: Task) => void;
 }> = ({
@@ -50,6 +53,7 @@ export const TaskListTableDefault: React.FC<{
   fontSize,
   // locale,
   // onExpanderClick,
+  ganttEvent
 }) => {
   // const toLocaleDateString = useMemo(
   //   () => toLocaleDateStringFactory(locale),
@@ -87,7 +91,9 @@ export const TaskListTableDefault: React.FC<{
                 return (
                   <div
                     key={code}
-                    className={styles.taskListCell}
+                    className={classnames(styles.taskListCell, {
+                      [styles.taskListTableRow_hover]: t.id === ganttEvent.hoverTask?.id
+                    })}
                     style={{
                       width: width || 200,
                       minWidth: rowWidth,

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { BarTask } from "../../types/bar-task";
 import { Task } from "../../types/public-types";
+import { GanttEvent } from "../../types/gantt-task-actions";
 import styles from "./task-list.module.css";
 
 export type TaskListProps = {
@@ -37,9 +38,11 @@ export type TaskListProps = {
     locale: string;
     tasks: Task[];
     selectedTaskId: string;
+    ganttEvent: GanttEvent;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
   }>;
+  ganttEvent: GanttEvent;
 };
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -61,6 +64,7 @@ export const TaskList: React.FC<TaskListProps> = ({
   horizontalContainerClass,
   TaskListHeader,
   TaskListTable,
+  ganttEvent
 }) => {
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -87,6 +91,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     tasks,
     locale,
     selectedTaskId: selectedTaskId,
+    ganttEvent,
     setSelectedTask,
     onExpanderClick,
   };

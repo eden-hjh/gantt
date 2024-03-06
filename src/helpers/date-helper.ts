@@ -93,7 +93,7 @@ export const ganttDateRange = (
     }
   }
 
-  console.log('newEndDate start', newStartDate, newEndDate)
+  // console.log('newEndDate start', newStartDate, newEndDate)
   
   switch (viewMode) {
     case ViewMode.Year:

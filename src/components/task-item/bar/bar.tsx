@@ -23,7 +23,7 @@ export const Bar: React.FC<TaskItemProps> = ({
   const handleHeight = task.height - 2;
 
   const barDisplaystyles = { ...task.styles, ...taskItemConfig.styles}
-  console.log('styles', taskItemConfig, barDisplaystyles, task.styles, taskItemConfig.styles)
+  // console.log('styles', taskItemConfig, barDisplaystyles, task.styles, taskItemConfig.styles)
 
   return (
     <g className={styles.barWrapper} tabIndex={0}>
@@ -35,7 +35,7 @@ export const Bar: React.FC<TaskItemProps> = ({
         progressX={taskItemConfig.progressX}
         progressWidth={taskItemConfig.progressWidth}
         barCornerRadius={task.barCornerRadius}
-        styles={{ ...task.styles, ...taskItemConfig.styles}}
+        styles={barDisplaystyles}
         isSelected={isSelected}
         onMouseDown={e => {
           isDateChangeable && onEventStart("move", task, e);

@@ -2,14 +2,10 @@
   fill: #fff;
 }
 
-/* .gridRow:nth-child(even) {
+.gridRow_hover {
   fill: #f5f5f5;
-} */
-
-.gridRowLine {
-  stroke: #ebeff2;
 }
 
-.gridTick {
+.gridRowLine, .gridTick {
   stroke: #e5e5e5;
 }

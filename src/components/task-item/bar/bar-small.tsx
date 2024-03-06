@@ -18,7 +18,7 @@ export const BarSmall: React.FC<TaskItemProps> = ({
     task.height
   );
 
-  console.log('styles small')
+  // console.log('styles small')
 
   return (
     <g className={styles.barWrapper} tabIndex={0}>
