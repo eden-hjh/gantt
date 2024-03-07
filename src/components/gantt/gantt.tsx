@@ -29,6 +29,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
   columns,
   headerHeight = 88,
+  // className,
   // columnWidth = 44,
   listCellWidth = "155px",
   rowHeight = 44,
@@ -484,7 +485,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     ganttEvent
   };
   return (
-    <div>
+    <div
+      style={{ height: '100%', display: "flex", flexDirection: 'column' }}
+      // className={classnames(className)}
+    >
       <div
         className={styles.wrapper}
         onKeyDown={handleKeyDown}
