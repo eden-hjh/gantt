@@ -2,7 +2,7 @@
  * @Author: jianhang_he jianhang_he@kingdee.com
  * @Date: 2024-02-20 16:05:14
  * @LastEditors: jianhang_he jianhang_he@kingdee.com
- * @LastEditTime: 2024-03-06 15:14:11
+ * @LastEditTime: 2024-03-07 16:02:20
  * @FilePath: \gantt-task-react\src\components\task-list\task-list-table.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,6 +11,8 @@ import styles from "./task-list-table.module.css";
 import { Task } from "../../types/public-types";
 import { GanttEvent } from "../../types/gantt-task-actions";
 import classnames from 'classnames'
+import { calcRowTaskHeight } from '../../helpers/bar-helper'
+// import { BarTask } from "../../types/bar-task";
 
 // const localeDateStringCache = {};
 // const toLocaleDateStringFactory =
@@ -46,7 +48,7 @@ export const TaskListTableDefault: React.FC<{
   onExpanderClick: (task: Task) => void;
 }> = ({
   columns,
-  rowHeight,
+  // rowHeight,
   rowWidth,
   tasks,
   fontFamily,
@@ -81,7 +83,7 @@ export const TaskListTableDefault: React.FC<{
         return (
           <div
             className={styles.taskListTableRow}
-            style={{ height: rowHeight * taskItemsCount }}
+            style={{ height: calcRowTaskHeight(20, taskItemsCount, 12, 12) }}
             key={`${t.id}row`}
           >
             {

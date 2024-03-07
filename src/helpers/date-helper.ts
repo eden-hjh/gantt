@@ -77,8 +77,8 @@ export const ganttDateRange = (
   viewMode: ViewMode,
   preStepsCount: number
 ) => {
-  let newStartDate: Date = tasks[0].start;
-  let newEndDate: Date = tasks[0].start;
+  let newStartDate: Date = tasks[0]?.taskItems?.[0]?.start || new Date(0);
+  let newEndDate: Date = tasks[0]?.taskItems?.[0]?.start  || new Date(0);
 
   // 获取最小和最大的时间
   for (const task of tasks) {
@@ -267,4 +267,41 @@ export const getDaysInMonth = (month: number, year: number) => {
 
 export const getPaddedNumber = (num: number): string => {
   return (num < 10 ? '0' : '') + num;
+}
+
+export const getColumnWidthByViewMode = (viewMode: ViewMode) => {
+  let columnWidth = 44;
+  if (viewMode === ViewMode.Year) {
+    columnWidth = 365;
+  } else if (viewMode === ViewMode.Month) {
+    columnWidth = 248;
+  } else if (viewMode === ViewMode.Week) {
+    columnWidth = 168;
+  }
+
+  return columnWidth
+}
+
+export const getTodayXByTimeMode = (viewMode: ViewMode) => {
+  const columnWidth = getColumnWidthByViewMode(viewMode)
+
+  let percentage = 0.5
+  const now = new Date()
+
+  if (viewMode === ViewMode.Year) {
+  } else if (viewMode === ViewMode.Month) {
+  } else if (viewMode === ViewMode.Week) {
+  } else {
+    const curMonth = now.getMonth()
+    const curYear = now.getMonth()
+    const curDate = now.getDate()
+
+    const days = getDaysInMonth(curMonth, curYear)
+
+    percentage = 0.5 || curDate / days
+  }
+
+  const x = percentage * columnWidth
+
+  return x
 }

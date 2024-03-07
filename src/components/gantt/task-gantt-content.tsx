@@ -303,6 +303,7 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
                   const _taskItem = { ...taskItem }
                   return (
                     <TaskItem
+                      key={taskItem.id}
                       task={newTask}
                       taskItemConfig={_taskItem}
                       arrowIndent={arrowIndent}

@@ -2,6 +2,14 @@ import { Task } from "../types/public-types";
 import { BarTask, TaskTypeInternal } from "../types/bar-task";
 import { BarMoveAction } from "../types/gantt-task-actions";
 
+export const calcRowTaskHeight = (taskHeight: number, taskItemsLen: number, topMargin: number, taskSpacing: number) => {
+  return taskItemsLen * taskHeight + taskItemsLen * taskSpacing + topMargin
+}
+
+export const calcRowTaskY = (preY: number, taskHeight: number, taskItemsLen: number, topMargin: number, taskSpacing: number) => {
+  return preY + calcRowTaskHeight(taskHeight, taskItemsLen, topMargin, taskSpacing)
+}
+
 export const convertToBarTasks = (
   tasks: Task[],
   dates: Date[],
@@ -22,7 +30,7 @@ export const convertToBarTasks = (
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string,
 ) => {
-  let currentY = 0
+  let rowY = 0
   let barTasks = tasks.map((t, i) => {
     const _task = convertToBarTask(
       t,
@@ -44,15 +52,11 @@ export const convertToBarTasks = (
       projectBackgroundSelectedColor,
       milestoneBackgroundColor,
       milestoneBackgroundSelectedColor,
-      currentY,
+      rowY,
     );
 
-    // 如果有taskItems的时候，那么y要等于task的条数乘于行高
-    if(t.taskItems?.length) {
-      currentY += (t.taskItems || [])?.length * rowHeight; 
-    } else {
-      currentY += rowHeight; 
-    }
+    const taskItemsLen = t.taskItems?.length || 1
+    rowY = calcRowTaskY(rowY, 20, taskItemsLen, 12, 12);
     
     return _task
   });
@@ -92,7 +96,7 @@ const convertToBarTask = (
   projectBackgroundSelectedColor: string,
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string,
-  currentY: number
+  rowY: number
 ): BarTask => {
   let barTask: BarTask;
   switch (task.type) {
@@ -116,8 +120,8 @@ const convertToBarTask = (
         index,
         dates,
         columnWidth,
-        rowHeight,
-        taskHeight,
+        // rowHeight,
+        // taskHeight,
         barCornerRadius,
         handleWidth,
         rtl,
@@ -134,8 +138,8 @@ const convertToBarTask = (
         index,
         dates,
         columnWidth,
-        rowHeight,
-        taskHeight,
+        // rowHeight,
+        // taskHeight,
         barCornerRadius,
         handleWidth,
         rtl,
@@ -143,7 +147,7 @@ const convertToBarTask = (
         barProgressSelectedColor,
         barBackgroundColor,
         barBackgroundSelectedColor,
-        currentY,
+        rowY,
       );
       break;
   }
@@ -155,8 +159,8 @@ const convertToBar = (
   index: number,
   dates: Date[],
   columnWidth: number,
-  rowHeight: number,
-  taskHeight: number,
+  // rowHeight: number,
+  // taskHeight: number,
   barCornerRadius: number,
   handleWidth: number,
   rtl: boolean,
@@ -164,8 +168,10 @@ const convertToBar = (
   barProgressSelectedColor: string,
   barBackgroundColor: string,
   barBackgroundSelectedColor: string,
-  currentY: number,
+  rowY: number,
 ): BarTask => {
+  const topMargin = 12
+  const taskSpacing = 12
   // console.log('convertToBar', task, rtl)
   let x1: number;
   let x2: number;
@@ -179,6 +185,7 @@ const convertToBar = (
     x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
   } else {
     if(taskItems.length > 0) {
+      let _y = rowY
       taskItems.forEach((taskItemConfig, itemIndex) => {
         x1 =  taskXCoordinate(taskItemConfig.start, dates, columnWidth),
         x2 = taskXCoordinate(taskItemConfig.end, dates, columnWidth)
@@ -195,28 +202,33 @@ const convertToBar = (
           x2 = x1 + handleWidth * 2;
         }
 
-        const topMargin = 12
-        const taskSpacing = 12 
-        const y = currentY + (itemIndex * taskHeight) + (itemIndex * taskSpacing) + topMargin;
+        if(itemIndex === 0) {
+          _y = rowY + topMargin;
+        } else {
+          _y = _y + 20 + taskSpacing
+        }
+        // const y = calcRowTaskY(rowY, 20, itemIndex, itemIndex === 0 ? topMargin : 0, taskSpacing);
 
         newTaskItems.push({
           ...taskItemConfig,
           x1,
           x2,
-          y,
+          y: _y,
           progressWidth,
           progressX,
           typeInternal
         })
       });
     }
-    x1 = taskXCoordinate(task.start, dates, columnWidth);
-    x2 = taskXCoordinate(task.end, dates, columnWidth);
+    // x1 = taskXCoordinate(task.start, dates, columnWidth);
+    // x2 = taskXCoordinate(task.end, dates, columnWidth);
   }
   
-  const y = taskYCoordinate(index, rowHeight, taskHeight);
+  // const y = taskYCoordinate(index, rowHeight, taskHeight);
   const hideChildren = task.type === "project" ? task.hideChildren : undefined;
 
+  const _rowHeight = calcRowTaskHeight(20, taskItems?.length || 1, topMargin, taskSpacing)
+  // console.log('_rowHeight', _rowHeight)
   const styles = {
     backgroundColor: barBackgroundColor,
     backgroundSelectedColor: barBackgroundSelectedColor,
@@ -227,16 +239,16 @@ const convertToBar = (
   return {
     ...task,
     typeInternal,
-    x1,
-    x2,
-    y,
+    x1: 0,
+    x2: 0,
+    y: rowY,
     index,
     progressX: 0,
     progressWidth: 0,
     barCornerRadius,
     handleWidth,
     hideChildren,
-    height: taskHeight,
+    height: _rowHeight,
     barChildren: [],
     styles,
     taskItems: newTaskItems

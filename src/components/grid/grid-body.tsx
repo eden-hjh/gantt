@@ -1,6 +1,7 @@
 import React, { ReactChild } from "react";
 import { Task } from "../../types/public-types";
-import { addToDate } from "../../helpers/date-helper";
+import { addToDate, getTodayXByTimeMode } from "../../helpers/date-helper";
+import { calcRowTaskHeight, calcRowTaskY } from "../../helpers/bar-helper";
 import styles from "./grid.module.css";
 import {
   GanttEvent,
@@ -8,8 +9,10 @@ import {
 } from "../../types/gantt-task-actions";
 import classnames from 'classnames'
 // import { BarTask } from "../../types/bar-task";
+import { ViewMode } from "../../types/public-types";
 
 export type GridBodyProps = {
+  // viewMode: ViewMode;
   tasks: Task[];
   dates: Date[];
   svgWidth: number;
@@ -18,17 +21,19 @@ export type GridBodyProps = {
   todayColor: string;
   rtl: boolean;
   rowCount?: number;
+  ganttFullHeight?: number;
   ganttEvent: GanttEvent;
   setGanttEvent: (value: GanttEvent) => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
   tasks,
   dates,
-  rowHeight,
+  // rowHeight,
   svgWidth,
   columnWidth,
   // todayColor,
   // rtl,
+  ganttFullHeight = 0,
   ganttEvent,
   setGanttEvent
 }) => {
@@ -52,25 +57,34 @@ export const GridBody: React.FC<GridBodyProps> = ({
 
   let y = 0;
   const gridRows: ReactChild[] = [];
-  const rowLines: ReactChild[] = [
-    <line
-      key="RowLineFirst"
-      x="0"
-      y1={0}
-      x2={svgWidth}
-      y2={0}
-      className={styles.gridRowLine}
-    />,
-  ];
-  for (const task of tasks) {
+  // const rowLines: ReactChild[] = [
+  //   <line
+  //     key="RowLineFirst"
+  //     x="0"
+  //     y1={0}
+  //     x2={svgWidth}
+  //     y2={0}
+  //     className={styles.gridRowLine}
+  //   />,
+  // ];
+
+  let lastTaskRowHeight = 0
+
+  tasks.forEach((task, index) => {
     const taskItemCount = task.taskItems?.length || 1
+    const height = calcRowTaskHeight(20, taskItemCount, 12, 12)
+
+    if(index === tasks.length - 1) {
+      lastTaskRowHeight = height
+    }
+
     gridRows.push(
       <rect
         key={"Row" + task.id}
         x="0"
         y={y}
         width={svgWidth}
-        height={rowHeight * taskItemCount}
+        height={height}
         className={classnames(styles.gridRow, {
           [styles.gridRow_hover]: task.id === ganttEvent.hoverTask?.id
         })}
@@ -82,21 +96,25 @@ export const GridBody: React.FC<GridBodyProps> = ({
         }}
       />
     );
-    y += (rowHeight * taskItemCount);
-    rowLines.push(
-      <line
-        key={"RowLine" + task.id}
-        x="0"
-        y1={y}
-        x2={svgWidth}
-        y2={y}
-        className={styles.gridRowLine}
-      />
-    );
-  }
+    y = calcRowTaskY(y, 20, taskItemCount, 12, 12);
+    // rowLines.push(
+    //   <line
+    //     key={"RowLine" + task.id}
+    //     x="0"
+    //     y1={y}
+    //     x2={svgWidth}
+    //     y2={y}
+    //     className={styles.gridRowLine}
+    //   />
+    // );
+  })
 
   let tickX = 0;
   const ticks: ReactChild[] = [];
+  // const lastRowTask = tasks[tasks.length -1] || { y: 0, height: 44 }
+
+  const ganttTasksHeight =  y + lastTaskRowHeight
+  const _y = ganttFullHeight > ganttTasksHeight ? ganttFullHeight : ganttTasksHeight
   for (let i = 0; i < dates.length; i++) {
     const date = dates[i];
     ticks.push(
@@ -105,7 +123,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
         x1={tickX}
         y1={0}
         x2={tickX}
-        y2={y}
+        y2={_y}
         className={styles.gridTick}
       />
     );
@@ -126,15 +144,18 @@ export const GridBodyToday: React.FC<GridBodyProps> = ({
   dates,
   columnWidth,
   todayColor,
-  rowHeight,
-  rtl
+  // rowHeight,
+  rtl,
+  ganttFullHeight = 0
 }) => {
   let y = 0;
 
   for (const task of tasks) {
     const taskItemCount = task.taskItems?.length || 1
-    y += (rowHeight * taskItemCount);
+    y = calcRowTaskY(y, 20, taskItemCount, 12, 12);
   }
+
+  const _y = ganttFullHeight > y ? ganttFullHeight : y
 
   const now = new Date();
   let tickX = 0;
@@ -157,10 +178,10 @@ export const GridBodyToday: React.FC<GridBodyProps> = ({
     ) {
       today = (
         <rect
-          x={tickX + columnWidth/2}
+          x={tickX + getTodayXByTimeMode(ViewMode.Day)}
           y={0}
           width={1}
-          height={y}
+          height={_y}
           fill='#FF5F1F'
         />
       );
@@ -177,7 +198,7 @@ export const GridBodyToday: React.FC<GridBodyProps> = ({
           x={tickX + columnWidth}
           y={0}
           width={columnWidth}
-          height={y}
+          height={_y}
           fill={todayColor}
         />
       );

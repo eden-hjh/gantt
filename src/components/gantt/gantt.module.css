@@ -20,8 +20,11 @@
   /* border-bottom: 1px solid #d9d9d9; */
 }
 
-.gantt {
-
+.gantt_horizontalContainer {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  flex-grow: 1;
 }
 
 .wrapper {

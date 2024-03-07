@@ -416,6 +416,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
   const gridProps: GridProps = {
+    // viewMode,
     ganttEvent,
     columnWidth,
     svgWidth,
