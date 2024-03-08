@@ -6,7 +6,7 @@
  * @FilePath: \gantt-task-react\src\components\task-list\task-list-table.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React from "react";
+import React, { useMemo } from "react";
 import styles from "./task-list-table.module.css";
 import { Task } from "../../types/public-types";
 import { GanttEvent } from "../../types/gantt-task-actions";
@@ -33,6 +33,8 @@ import { calcRowTaskHeight } from '../../helpers/bar-helper'
 //   day: "numeric",
 // };
 
+const defaultColumnWidth = 160
+
 export const TaskListTableDefault: React.FC<{
   columns: any[];
   rowHeight: number;
@@ -49,7 +51,7 @@ export const TaskListTableDefault: React.FC<{
 }> = ({
   columns,
   // rowHeight,
-  rowWidth,
+  // rowWidth,
   tasks,
   fontFamily,
   fontSize,
@@ -61,6 +63,25 @@ export const TaskListTableDefault: React.FC<{
   //   () => toLocaleDateStringFactory(locale),
   //   [locale]
   // );
+  
+
+  const _columns = useMemo(() => {
+    const newColums = [...columns]
+
+    const maxWidth = 240
+    const columnsWidthCount = columns.reduce((preCount, cur) => {
+      return preCount + (cur?.width || defaultColumnWidth) 
+    }, 0)
+
+    // 补充column，避免hover的时候单元格中间出现断层
+    if(maxWidth > columnsWidthCount) {
+      newColums.push({ code: 'none', width: maxWidth - columnsWidthCount })
+    }
+
+    return newColums
+  }, [columns])
+
+  
 
   return (
     <div
@@ -87,7 +108,7 @@ export const TaskListTableDefault: React.FC<{
             key={`${t.id}row`}
           >
             {
-              columns?.map((column) => {
+              _columns?.map((column) => {
                 const { code, width, render } = column || {}
                 const value = t[code]
                 return (
@@ -97,9 +118,7 @@ export const TaskListTableDefault: React.FC<{
                       [styles.taskListTableRow_hover]: t.id === ganttEvent.hoverTask?.id
                     })}
                     style={{
-                      width: width || 200,
-                      minWidth: rowWidth,
-                      maxWidth: rowWidth,
+                      width: width || defaultColumnWidth,
                     }}
                     title={value}
                   >

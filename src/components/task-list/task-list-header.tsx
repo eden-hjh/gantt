@@ -1,13 +1,19 @@
 import React from "react";
 import styles from "./task-list-header.module.css";
 
+const alignMap = {
+  'left': 'flex-start',
+  'center': 'center',
+  'right': 'flex-end'
+}
+
 export const TaskListHeaderDefault: React.FC<{
   headerHeight: number;
-  rowWidth: string;
+  // rowWidth: string;
   fontFamily: string;
   fontSize: string;
   columns: any[]
-}> = ({ headerHeight, fontFamily, fontSize, rowWidth, columns }) => {
+}> = ({ headerHeight, fontFamily, fontSize, columns }) => {
   return (
     <div
       className={styles.ganttTable}
@@ -19,7 +25,7 @@ export const TaskListHeaderDefault: React.FC<{
       <div
         className={styles.ganttTable_Header}
         style={{
-          height: headerHeight - 2,
+          height: headerHeight,
         }}
       >
         {
@@ -27,18 +33,20 @@ export const TaskListHeaderDefault: React.FC<{
             const {
               code,
               name,
-              width
+              width,
+              align = 'left'
             } = column || {}
             return (
               <div
                 key={code}
                 className={styles.ganttTable_HeaderItem}
                 style={{
-                  width: width || 200,
-                  minWidth: rowWidth,
+                  width: width || 160,
+                  justifyContent: alignMap[align] || alignMap.left
+                  // minWidth: rowWidth,
                 }}
               >
-                {name}
+                <div className={styles.ganttTable_HeaderItem_name}>{name}</div>
               </div>
             )
           })

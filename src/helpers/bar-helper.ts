@@ -512,18 +512,18 @@ const handleTaskBySVGMouseEventForBar = (
       isChanged = changedTakItemConfig.x1 !== taskItemConfig.x1;
       if (isChanged) {
         if (rtl) {
-          changedTask[taskItemConfig.end] = dateByX(
+          changedTakItemConfig.end = dateByX(
             newX1,
             taskItemConfig.x1,
-            selectedTask[taskItemConfig.end],
+            taskItemConfig.end,
             xStep,
             timeStep
           );
         } else {
-          changedTask[taskItemConfig.start] = dateByX(
+          changedTakItemConfig.start = dateByX(
             newX1,
             taskItemConfig.x1,
-            selectedTask[taskItemConfig.start],
+            taskItemConfig.start,
             xStep,
             timeStep
           );
@@ -531,7 +531,7 @@ const handleTaskBySVGMouseEventForBar = (
         const [progressWidth, progressX] = progressWithByParams(
           taskItemConfig.x1,
           taskItemConfig.x2,
-          changedTask[taskItemConfig.progress],
+          taskItemConfig.progress,
           rtl
         );
         changedTakItemConfig.progressWidth = progressWidth;
@@ -553,18 +553,18 @@ const handleTaskBySVGMouseEventForBar = (
       isChanged = changedTakItemConfig.x2 !== selectedTask.x2;
       if (isChanged) {
         if (rtl) {
-          changedTask[taskItemConfig.start] = dateByX(
+          changedTakItemConfig.start = dateByX(
             newX2,
             taskItemConfig.x2,
-            selectedTask[taskItemConfig.start],
+            taskItemConfig.start,
             xStep,
             timeStep
           );
         } else {
-          changedTask[taskItemConfig.end] = dateByX(
+          changedTakItemConfig.end = dateByX(
             newX2,
             taskItemConfig.x2,
-            selectedTask[taskItemConfig.end],
+            taskItemConfig.end,
             xStep,
             timeStep
           );
@@ -572,7 +572,7 @@ const handleTaskBySVGMouseEventForBar = (
         const [progressWidth, progressX] = progressWithByParams(
           taskItemConfig.x1,
           taskItemConfig.x2,
-          changedTask[taskItemConfig.progress],
+          taskItemConfig.progress,
           rtl
         );
         changedTakItemConfig.progressWidth = progressWidth;

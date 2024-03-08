@@ -1,13 +1,13 @@
 import React from "react";
 import { Task, ViewMode, Gantt } from "gantt-task-react";
 import { ViewSwitcher } from "./components/view-switcher";
-import { getStartEndDateForProject, initTasks, columns } from "./helper";
+import { getStartEndDateForProject, initTasks, columns1 } from "./helper";
 import "gantt-task-react/dist/index.css";
 
 // Init
 const App = () => {
   const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
-  const [tasks, setTasks] = React.useState<Task[]>(initTasks());
+  const [tasks, setTasks] = React.useState<any[]>(initTasks());
   const [isChecked, setIsChecked] = React.useState(true);
   let columnWidth = 65;
   if (view === ViewMode.Year) {
@@ -100,9 +100,9 @@ const App = () => {
         onSelect={handleSelect}
         onExpanderClick={handleExpanderClick}
         listCellWidth={isChecked ? "155px" : ""}
-        // ganttHeight={400}
+        // ganttHeight={600}
         columnWidth={columnWidth}
-        columns={columns}
+        columns={columns1}
         // tasksConfig={[]}
       />
     </div>

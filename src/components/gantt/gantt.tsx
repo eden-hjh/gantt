@@ -17,7 +17,7 @@ import { VerticalScroll } from "../other/vertical-scroll";
 import { TaskListProps, TaskList } from "../task-list/task-list";
 import { TaskGantt } from "./task-gantt";
 import { BarTask } from "../../types/bar-task";
-import { convertToBarTasks } from "../../helpers/bar-helper";
+import { convertToBarTasks, calcRowTaskY } from "../../helpers/bar-helper";
 import { GanttEvent } from "../../types/gantt-task-actions";
 import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
@@ -109,9 +109,9 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const ganttFullHeight = useMemo(() => {
     const _fullHeight =  barTasks.reduce((pre, curTask) => {
       if(curTask.taskItems?.length) {
-        pre += curTask.taskItems?.length * rowHeight
+        pre = calcRowTaskY(pre, 20, curTask.taskItems?.length, 12, 12)
       } else {
-        pre += rowHeight
+        pre = calcRowTaskY(pre, 20, 1, 12, 12)
       }
 
       return pre
@@ -236,18 +236,22 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         action === "progress"
       ) {
         const prevStateTask = barTasks.find(t => t.id === changedTask.id);
-        if (
-          prevStateTask &&
-          (taskItemConfig && prevStateTask[taskItemConfig.start].getTime() !== changedTask[taskItemConfig.start].getTime() ||
-            prevStateTask[taskItemConfig.end].getTime() !== changedTask[taskItemConfig.end].getTime() ||
-            prevStateTask[taskItemConfig.progress] !== changedTask[taskItemConfig.progress])
-        ) {
-          // actions for change
-          const newTaskList = barTasks.map(t =>
-            t.id === changedTask.id ? changedTask : t
-          );
-          setBarTasks(newTaskList);
+
+        if(taskItemConfig) {
+          const prevStateTaskItemConfig = prevStateTask?.taskItems?.find(t => t.id === taskItemConfig.id)
+          if (
+            taskItemConfig && prevStateTaskItemConfig.start?.getTime() !== taskItemConfig.start?.getTime() ||
+            prevStateTaskItemConfig.end?.getTime() !== taskItemConfig.end.getTime() ||
+            prevStateTaskItemConfig.progress !== taskItemConfig.progress
+          ) {
+            // actions for change
+            const newTaskList = barTasks.map(t =>
+              t.id === changedTask.id ? changedTask : t
+            );
+            setBarTasks(newTaskList);
+          }
         }
+        
       } 
     }
   }, [ganttEvent, barTasks]);
@@ -329,7 +333,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   ]);
 
   const handleScrollY = (event: SyntheticEvent<HTMLDivElement>) => {
-    if (scrollY !== event.currentTarget.scrollTop && !ignoreScrollEvent) {
+    console.log('ignoreScrollEvent', ignoreScrollEvent)
+    if (scrollY !== event.currentTarget.scrollTop) {
       setScrollY(event.currentTarget.scrollTop);
       setIgnoreScrollEvent(true);
     } else {
@@ -338,11 +343,17 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   };
 
   const handleScrollX = (event: SyntheticEvent<HTMLDivElement>) => {
-    if (scrollX !== event.currentTarget.scrollLeft && !ignoreScrollEvent) {
-      setScrollX(event.currentTarget.scrollLeft);
-      setIgnoreScrollEvent(true);
-    } else {
-      setIgnoreScrollEvent(false);
+    // if (scrollX !== event.currentTarget.scrollLeft && !ignoreScrollEvent) {
+    //   setScrollX(event.currentTarget.scrollLeft);
+    //   setIgnoreScrollEvent(true);
+    // } else {
+    //   setIgnoreScrollEvent(false);
+    // }
+    if (scrollX !== event.currentTarget.scrollLeft) { 
+      setScrollX(event.currentTarget.scrollLeft); 
+      setIgnoreScrollEvent(true); 
+    } else { 
+      setIgnoreScrollEvent(false); 
     }
   };
 

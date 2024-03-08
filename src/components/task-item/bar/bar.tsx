@@ -1,26 +1,26 @@
 import React from "react";
-import { getProgressPoint } from "../../../helpers/bar-helper";
+// import { getProgressPoint } from "../../../helpers/bar-helper";
 import { BarDisplay } from "./bar-display";
-import { BarDateHandle } from "./bar-date-handle";
-import { BarProgressHandle } from "./bar-progress-handle";
+// import { BarDateHandle } from "./bar-date-handle";
+// import { BarProgressHandle } from "./bar-progress-handle";
 import { TaskItemProps } from "../task-item";
 import styles from "./bar.module.css";
 
 export const Bar: React.FC<TaskItemProps> = ({
   task,
-  isProgressChangeable,
+  // isProgressChangeable,
   isDateChangeable,
-  rtl,
+  // rtl,
   onEventStart,
   isSelected,
   taskItemConfig
 }) => {
-  const progressPoint = getProgressPoint(
-    +!rtl * taskItemConfig.progressWidth + taskItemConfig.progressX,
-    task.y,
-    task.height
-  );
-  const handleHeight = task.height - 2;
+  // const progressPoint = getProgressPoint(
+  //   +!rtl * taskItemConfig.progressWidth + taskItemConfig.progressX,
+  //   task.y,
+  //   task.height
+  // );
+  // const handleHeight = task.height - 2;
 
   const barDisplaystyles = { ...task.styles, ...taskItemConfig.styles}
   // console.log('styles', taskItemConfig, barDisplaystyles, task.styles, taskItemConfig.styles)
@@ -41,10 +41,9 @@ export const Bar: React.FC<TaskItemProps> = ({
           isDateChangeable && onEventStart("move", task, e);
         }}
       />
-      <g className="handleGroup">
+      {/* <g className="handleGroup">
         {isDateChangeable && (
           <g>
-            {/* left */}
             <BarDateHandle
               x={taskItemConfig.x1 + 1}
               y={task.y + 1}
@@ -55,7 +54,6 @@ export const Bar: React.FC<TaskItemProps> = ({
                 onEventStart("start", task, e, taskItemConfig);
               }}
             />
-            {/* right */}
             <BarDateHandle
               x={taskItemConfig.x2 - task.handleWidth - 1}
               y={task.y + 1}
@@ -76,7 +74,7 @@ export const Bar: React.FC<TaskItemProps> = ({
             }}
           />
         )}
-      </g>
+      </g> */}
     </g>
   );
 };
