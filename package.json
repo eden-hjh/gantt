@@ -60,6 +60,7 @@
     "dist"
   ],
   "dependencies": {
+    "@kdcloudjs/kdesign": "^1.7.52",
     "@types/react": "^18.2.57"
   }
 }

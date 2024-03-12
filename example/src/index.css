@@ -1,6 +1,7 @@
 .Wrapper {
   margin-bottom: 2rem;
   height: 800px;
+  padding: 20px;
 }
 .ViewContainer {
   list-style: none;

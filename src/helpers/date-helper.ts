@@ -305,3 +305,23 @@ export const getTodayXByTimeMode = (viewMode: ViewMode) => {
 
   return x
 }
+
+export const formatData = (date: Date) => {
+  const month = getPaddedNumber(date.getMonth() + 1)
+  const day = getPaddedNumber(date.getDate())
+  return `${date.getFullYear()}${month}${day}`
+}
+
+export const getDaysBetweenDates = (date1: Date, date2: Date) => {
+  if(!date1 || !date2) {
+    return 0
+  }
+
+  // 计算两个日期之间的毫秒差  
+  var diff = Math.abs(+date2 - (+date1));  
+
+  // 将毫秒差转换为天数  
+  var days = Math.ceil(diff / (1000 * 60 * 60 * 24)); // 1000毫秒/秒 * 60秒/分钟 * 60分钟/小时 * 24小时/天  
+
+  return days;  
+}

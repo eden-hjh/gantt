@@ -19,4 +19,5 @@ export type GanttEvent = {
   originalSelectedTask?: BarTask;
   action: GanttContentMoveAction;
   taskItemConfig?: any;
+  event?: React.MouseEvent;
 };

@@ -23,7 +23,10 @@ import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
 import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
 // import classnames from 'classnames'
+// import { SplitPanel } from '@kdcloudjs/kdesign'
+import { debounce } from '../../helpers'
 import styles from "./gantt.module.css";
+import '@kdcloudjs/kdesign/dist/kdesign.css'
 
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
@@ -273,6 +276,23 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   }, [taskListRef, listCellWidth]);
 
   useEffect(() => {
+    const resized = debounce(function() {  
+      // 这里的代码只会在用户停止调整窗口大小后的指定时间间隔后执行一次  
+      console.log('Window resized!'); 
+      if (wrapperRef.current && taskListRef.current) {
+        setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListRef.current.offsetWidth);
+        setTaskListWidth(taskListRef.current.offsetWidth);
+      } 
+    }, 250); // 延迟250毫秒执行  
+      
+    window.addEventListener('resize', resized);
+
+    return () => {
+      window.removeEventListener('resize', resized);
+    }
+  }, [])
+
+  useEffect(() => {
     if (wrapperRef.current) {
       setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListWidth);
     }
@@ -496,6 +516,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     columns,
     ganttEvent
   };
+
   return (
     <div
       style={{ height: '100%', display: "flex", flexDirection: 'column' }}
@@ -507,7 +528,21 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         tabIndex={0}
         ref={wrapperRef}
       >
-        {listCellWidth && <TaskList {...tableProps} />}
+        {/* <SplitPanel
+        min={240}
+        max={0.6}
+          firstSlot={listCellWidth && <TaskList {...tableProps} />} 
+          secondSlot={<TaskGantt
+            gridProps={gridProps}
+            calendarProps={calendarProps}
+            barProps={barProps}
+            ganttHeight={ganttHeight}
+            scrollY={scrollY}
+            scrollX={scrollX}
+            ganttFullHeight={ganttFullHeight}
+          />} 
+        /> */}
+        {listCellWidth && <TaskList {...tableProps} />} 
         <TaskGantt
           gridProps={gridProps}
           calendarProps={calendarProps}
@@ -517,7 +552,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
           scrollX={scrollX}
           ganttFullHeight={ganttFullHeight}
         />
-        {ganttEvent.changedTask && (
+        {ganttEvent.hoverTask && ganttEvent.action === 'row_mouseenter' && ganttEvent.event && (
           <Tooltip
             arrowIndent={arrowIndent}
             rowHeight={rowHeight}
@@ -527,12 +562,13 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
             fontSize={fontSize}
             scrollX={scrollX}
             scrollY={scrollY}
-            task={ganttEvent.changedTask}
+            task={ganttEvent.hoverTask}
             headerHeight={headerHeight}
             taskListWidth={taskListWidth}
             TooltipContent={TooltipContent}
             rtl={rtl}
             svgWidth={svgWidth}
+            mouseEvent={ganttEvent.event}
           />
         )}
         <VerticalScroll

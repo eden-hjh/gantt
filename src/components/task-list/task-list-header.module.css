@@ -1,7 +1,10 @@
 .ganttTable {
   display: table;
-  border: #D9D9D9 1px solid;
+  /* border: #D9D9D9 1px solid; */
   font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .ganttTable_Header {
@@ -21,6 +24,7 @@
   vertical-align: -webkit-baseline-middle;
   vertical-align: middle;
   padding-left: 12px;
+  border-bottom: 1px solid rgb(196, 196, 196);
 }
 
 .ganttTable_HeaderItem:not(:last-child) {

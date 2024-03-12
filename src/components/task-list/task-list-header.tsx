@@ -42,8 +42,8 @@ export const TaskListHeaderDefault: React.FC<{
                 className={styles.ganttTable_HeaderItem}
                 style={{
                   width: width || 160,
-                  justifyContent: alignMap[align] || alignMap.left
-                  // minWidth: rowWidth,
+                  justifyContent: alignMap[align] || alignMap.left,
+                  minWidth: width || 160,
                 }}
               >
                 <div className={styles.ganttTable_HeaderItem_name}>{name}</div>

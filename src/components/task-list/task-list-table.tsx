@@ -119,6 +119,7 @@ export const TaskListTableDefault: React.FC<{
                     })}
                     style={{
                       width: width || defaultColumnWidth,
+                      minWidth: width || defaultColumnWidth,
                     }}
                     title={value}
                   >

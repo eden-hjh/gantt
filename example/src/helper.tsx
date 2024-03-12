@@ -3,7 +3,11 @@ const currentDate = new Date();
 const task1 = [
   {
     "nc_jay6xwi5ly": "", "nc_3rxmvbawwt": null, "nc_dixrz1t5e3": null, "nc_47eaqdipwd": null, "nocodecreatorfield": "IERP", "nc_yp5iup1p5x": null, "nc_teet1rns2n": "", "nocodecreatedatefield": "2024-03-01 10:12:14", "nc_pmj8livjf4": "c", "nocodemodifydatefield": "2024-03-01 10:12:31", "id": "1896321502532096000", "nocodemodifierfield": "IERP", "nc_ay68qfu592": "c",
-    "taskItems": [{ "id": "FZDV1N14tP", "name": "开始结束", "styles": { "backgroundColor": "#276FF5" }, "start": new Date(currentDate.getFullYear(), currentDate.getMonth(), 1), "end": new Date(currentDate.getFullYear(), currentDate.getMonth(), 8) }, { "id": "ayYJY1i9u2", "name": "实际开始结束", "styles": { "backgroundColor": "#FF5F1F" }, "start": new Date(currentDate.getFullYear(), currentDate.getMonth(), 8), "end": new Date(currentDate.getFullYear(), currentDate.getMonth(), 16) }]
+    "taskItems": [
+      { "id": "FZDV1N14tP", "name": "开始结束", "styles": { "backgroundColor": "#276FF5" }, 
+      // "start": new Date(currentDate.getFullYear(), currentDate.getMonth(), 1), 
+      "end": new Date(currentDate.getFullYear(), currentDate.getMonth(), 8) }, 
+      { "id": "ayYJY1i9u2", "name": "实际开始结束", "styles": { "backgroundColor": "#FF5F1F" }, "start": new Date(currentDate.getFullYear(), currentDate.getMonth(), 8), "end": new Date(currentDate.getFullYear(), currentDate.getMonth(), 16) }]
   },
   {
     "nc_jay6xwi5ly": "", "nc_3rxmvbawwt": null, "nc_dixrz1t5e3": null, "nc_47eaqdipwd": null, "nocodecreatorfield": "IERP", "nc_yp5iup1p5x": null, "nc_teet1rns2n": "", "nocodecreatedatefield": "2024-03-01 10:12:14", "nc_pmj8livjf4": "c", "nocodemodifydatefield": "2024-03-01 10:12:31", "id": "1896321502532096001", "nocodemodifierfield": "IERP", "nc_ay68qfu592": "c",

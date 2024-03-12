@@ -2,7 +2,7 @@
  * @Author: jianhang_he jianhang_he@kingdee.com
  * @Date: 2024-02-20 16:05:14
  * @LastEditors: jianhang_he jianhang_he@kingdee.com
- * @LastEditTime: 2024-03-08 16:09:26
+ * @LastEditTime: 2024-03-12 15:40:27
  * @FilePath: \gantt-task-react\src\components\gantt\task-gantt.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -51,7 +51,7 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
     return  horizontalContainerRef.current?.getBoundingClientRect()?.height || 0
   }, [horizontalContainerRef.current])
 
-  console.log('horizontalContainerRef', horizontalContainerHeight)
+  // console.log('horizontalContainerRef', horizontalContainerHeight)
 
   const _ganttFullHeight = horizontalContainerHeight > ganttFullHeight ? horizontalContainerHeight : ganttFullHeight
 

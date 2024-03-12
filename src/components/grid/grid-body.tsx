@@ -39,13 +39,15 @@ export const GridBody: React.FC<GridBodyProps> = ({
 }) => {
   const onEventStart = (
     action: GanttContentMoveAction,
-    task: any
+    task: any,
+    event?: React.MouseEvent
   ) => {
     if (action === "row_mouseenter") {
       if (!ganttEvent.action || ganttEvent.action === 'row_mouseenter') {
         setGanttEvent({
           action,
-          hoverTask: task
+          hoverTask: task,
+          event
         });
       }
     } else if (action === "row_mouseleave") {
@@ -88,11 +90,11 @@ export const GridBody: React.FC<GridBodyProps> = ({
         className={classnames(styles.gridRow, {
           [styles.gridRow_hover]: task.id === ganttEvent.hoverTask?.id
         })}
-        onMouseEnter={() => {
-          onEventStart("row_mouseenter", task);
+        onMouseEnter={(e: React.MouseEvent) => {
+          onEventStart("row_mouseenter", task, e);
         }}
-        onMouseLeave={() => {
-          onEventStart("row_mouseleave", task);
+        onMouseLeave={(e: React.MouseEvent) => {
+          onEventStart("row_mouseleave", task, e);
         }}
       />
     );
