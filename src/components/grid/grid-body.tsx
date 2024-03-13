@@ -103,16 +103,6 @@ export const GridBody: React.FC<GridBodyProps> = ({
       />
     );
     y = calcRowTaskY(y, 20, taskItemCount, 12, 12);
-    // rowLines.push(
-    //   <line
-    //     key={"RowLine" + task.id}
-    //     x="0"
-    //     y1={y}
-    //     x2={svgWidth}
-    //     y2={y}
-    //     className={styles.gridRowLine}
-    //   />
-    // );
   })
 
   let tickX = 0;
@@ -133,6 +123,21 @@ export const GridBody: React.FC<GridBodyProps> = ({
         className={styles.gridTick}
       />
     );
+
+    // 周末日
+    // if(date.getDay() === 6 || date.getDay() === 7) {
+    //   ticks.push(
+    //     <rect
+    //       key={'weekend' + date.getTime()}
+    //       x={tickX}
+    //       y={0}
+    //       width={44}
+    //       height={_y}
+    //       fill='#FAFAFA'
+    //     />
+    //   )
+    // }
+
     tickX += columnWidth;
   }
   return (

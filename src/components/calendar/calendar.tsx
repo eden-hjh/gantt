@@ -10,6 +10,8 @@ import {
   getLocaleYear
 } from "../../helpers/date-helper";
 import { DateSetup } from "../../types/date-setup";
+import { startOfDate } from '../../helpers/date-helper' 
+import classnames from 'classnames'
 import styles from "./calendar.module.css";
 
 export type CalendarProps = {
@@ -235,19 +237,24 @@ export const Calendar: React.FC<CalendarProps> = ({
           height="44"  
           y={headerHeight * 0.5 - 1}
           x={columnWidth * i}
-          stroke="#d9d9d9" stroke-width="1" fill="#fafafa"
+          stroke="#d9d9d9" strokeWidth="1" fill="#fafafa"
         >
         </rect>  
       );
 
+      const isToday = +startOfDate(new Date(), "day") === +date 
       bottomValues.push(
         <text
           key={date.getTime()}
           x={columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
         >
-          <tspan className={styles.calendarBottomText_day} y={headerHeight * 0.7} x={columnWidth * i + columnWidth * 0.5}>{paddedDay}</tspan>  
-          <tspan className={styles.calendarBottomText_weekday} y={headerHeight * 0.7 + 15} x={columnWidth * i + columnWidth * 0.5}>{weekDay[1]}</tspan>  
+          <tspan className={classnames(styles.calendarBottomText_day, {
+            [styles.calendarBottomText_today]: isToday
+          })} y={headerHeight * 0.7} x={columnWidth * i + columnWidth * 0.5}>{paddedDay}</tspan>  
+          <tspan className={classnames(styles.calendarBottomText_weekday, {
+            [styles.calendarBottomText_today]: isToday
+          })} y={headerHeight * 0.7 + 15} x={columnWidth * i + columnWidth * 0.5}>{weekDay[1]}</tspan>  
         </text>
       );
       if(curMonth === undefined || curMonth !== date.getMonth()) {

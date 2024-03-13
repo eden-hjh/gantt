@@ -21,6 +21,10 @@
   font-size: 12px;
 }
 
+.calendarBottomText_today {
+  fill: #FF5F1F;
+}
+
 .calendarTopTick {
   stroke: #d9d9d9;
 }
