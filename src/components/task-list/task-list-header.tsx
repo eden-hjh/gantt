@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./task-list-header.module.css";
 
-const alignMap = {
-  'left': 'flex-start',
-  'center': 'center',
-  'right': 'flex-end'
-}
+// const alignMap = {
+//   'left': 'flex-start',
+//   'center': 'center',
+//   'right': 'flex-end'
+// }
 
 export const TaskListHeaderDefault: React.FC<{
   headerHeight: number;
@@ -42,7 +42,8 @@ export const TaskListHeaderDefault: React.FC<{
                 className={styles.ganttTable_HeaderItem}
                 style={{
                   width: width || 160,
-                  justifyContent: alignMap[align] || alignMap.left,
+                  textAlign: align || 'left',
+                  maxWidth: width || 160,
                   minWidth: width || 160,
                 }}
               >

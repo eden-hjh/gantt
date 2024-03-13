@@ -47,21 +47,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
   mouseEvent
 }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const triggerRef = useRef<HTMLDivElement>(null);
 
-  const [visible, setVisible] = useState<boolean>(true)
-  const [relatedY, setRelatedY] = useState(0);
-  const [relatedX, setRelatedX] = useState(0);
+  const [visible, setVisible] = useState<boolean>(false)
+
   useEffect(() => {
     if (tooltipRef.current) {
       const { clientX, clientY } = mouseEvent || { clientX: 0, clientY: 0 }
 
-      if(triggerRef.current) {
-        triggerRef.current.style.cssText += `;left: ${clientX}px;top: ${clientY}px;`
-      }
-
-      setRelatedY(clientY);
-      setRelatedX(clientX);
+      tooltipRef.current.style.cssText += `;left: ${clientX}px;top: ${clientY}px;`
     }
   }, [
     task.id
@@ -72,10 +65,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
   }, [task.id])
 
   return ReactDOM.createPortal(
-    <div ref={tooltipRef} className={styles.tooltip} style={{ left: relatedX, top: relatedY }}>
+    <div ref={tooltipRef} className={styles.tooltip}>
       <DropDownPanel
         scrollHidden
-        // popperClassName={`${prefixCls}-quick-setting-dropdown`}
+        popperClassName={styles.tooltip_content}
         visible={visible}
         onVisibleChange={(visible: boolean) => setVisible(visible)}
         placement='bottomLeft'

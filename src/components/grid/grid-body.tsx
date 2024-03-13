@@ -44,11 +44,13 @@ export const GridBody: React.FC<GridBodyProps> = ({
   ) => {
     if (action === "row_mouseenter") {
       if (!ganttEvent.action || ganttEvent.action === 'row_mouseenter') {
-        setGanttEvent({
-          action,
-          hoverTask: task,
-          event
-        });
+        setTimeout(() => {
+          setGanttEvent({
+            action,
+            hoverTask: task,
+            event
+          });
+        })
       }
     } else if (action === "row_mouseleave") {
       if (ganttEvent.action === "row_mouseenter" && ganttEvent.hoverTask?.id === task.id) {

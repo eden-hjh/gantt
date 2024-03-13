@@ -1,4 +1,5 @@
 .scrollWrapper {
+  flex-shrink: 0;
   overflow: auto;
   max-width: 100%;
   /*firefox*/

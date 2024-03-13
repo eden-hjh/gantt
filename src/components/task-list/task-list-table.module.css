@@ -24,9 +24,17 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 12px;
+  padding: 0 12px;
   border-bottom: #D9D9D9 1px solid;
   border-right: #D9D9D9 1px solid;
+  box-sizing: border-box;
+}
+
+.taskListCell_content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .taskListNameWrapper {

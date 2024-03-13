@@ -2,7 +2,7 @@
  * @Author: jianhang_he jianhang_he@kingdee.com
  * @Date: 2024-02-20 16:05:14
  * @LastEditors: jianhang_he jianhang_he@kingdee.com
- * @LastEditTime: 2024-03-07 16:02:20
+ * @LastEditTime: 2024-03-13 14:41:35
  * @FilePath: \gantt-task-react\src\components\task-list\task-list-table.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -109,7 +109,7 @@ export const TaskListTableDefault: React.FC<{
           >
             {
               _columns?.map((column) => {
-                const { code, width, render } = column || {}
+                const { code, width, render, align } = column || {}
                 const value = t[code]
                 return (
                   <div
@@ -119,11 +119,13 @@ export const TaskListTableDefault: React.FC<{
                     })}
                     style={{
                       width: width || defaultColumnWidth,
+                      maxWidth: width || defaultColumnWidth,
                       minWidth: width || defaultColumnWidth,
+                      textAlign: align || 'left',
                     }}
                     title={value}
                   >
-                    { typeof render === 'function' ? render(value, t, i) : <div>{typeof value !== 'string' ? '' : value}</div>}
+                    { typeof render === 'function' ? render(value, t, i) : <div className={styles.taskListCell_content}>{typeof value !== 'string' ? '' : value}</div>}
                     {/* <div className={styles.taskListNameWrapper}>
                       <div
                         className={
