@@ -91,9 +91,11 @@ export const GridBody: React.FC<GridBodyProps> = ({
           [styles.gridRow_hover]: task.id === ganttEvent.hoverTask?.id
         })}
         onMouseEnter={(e: React.MouseEvent) => {
+          e.persist()
           onEventStart("row_mouseenter", task, e);
         }}
         onMouseLeave={(e: React.MouseEvent) => {
+          e.persist()
           onEventStart("row_mouseleave", task, e);
         }}
       />

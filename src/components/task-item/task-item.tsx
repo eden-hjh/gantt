@@ -46,6 +46,8 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
   // const [isTextInside, setIsTextInside] = useState(true);
 
   useEffect(() => {
+    if(!taskItemConfig.start && !taskItemConfig.end) return
+    
     switch (taskItemConfig.typeInternal) {
       case "milestone":
         setTaskItem(<Milestone {...props} />);
@@ -60,7 +62,7 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         setTaskItem(<Bar {...props} />);
         break;
     }
-  }, [task, isSelected]);
+  }, [taskItemConfig, isSelected]);
 
   // useEffect(() => {
   //   if (textRef.current) {

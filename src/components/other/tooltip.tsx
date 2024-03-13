@@ -64,7 +64,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
       setRelatedX(clientX);
     }
   }, [
-    tooltipRef,
     task.id
   ]);
 

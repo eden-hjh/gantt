@@ -77,8 +77,24 @@ export const ganttDateRange = (
   viewMode: ViewMode,
   preStepsCount: number
 ) => {
-  let newStartDate: Date = tasks[0]?.taskItems?.[0]?.start || new Date(0);
-  let newEndDate: Date = tasks[0]?.taskItems?.[0]?.start  || new Date(0);
+  let newStartDate: Date  = new Date(0)
+  let newEndDate: Date = new Date(0)
+
+  for(let i = 0; i < tasks.length; i++) {
+    const { taskItems = [] } = tasks[i] || {}
+    for(let j = 0; j < taskItems.length; j++) {
+      const { start, end } = taskItems[j]
+      if(newStartDate !== new Date(0) && start) {
+        newStartDate = start
+      }
+      if(newEndDate !== new Date(0) && end) {
+        newEndDate = end
+      }
+      if(newStartDate !== new Date(0) && newEndDate !== new Date(0)) {
+        break
+      }
+    }
+  }
 
   // 获取最小和最大的时间
   for (const task of tasks) {
@@ -125,8 +141,9 @@ export const ganttDateRange = (
       newEndDate = addToDate(newEndDate, 1.5, "month");
       break;
     case ViewMode.Day:
+      const startDataDay = newStartDate.getDate()
       newStartDate = startOfDate(newStartDate, "day");
-      newStartDate = addToDate(newStartDate, -1 * preStepsCount, "day");
+      newStartDate = addToDate(newStartDate, -1 * startDataDay * preStepsCount, "day");
 
       const daysInMonth = getDaysInMonth(newEndDate.getMonth(), newEndDate.getFullYear())
       const newEndDay = newEndDate.getDate()

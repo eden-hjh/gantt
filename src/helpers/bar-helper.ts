@@ -179,7 +179,7 @@ const convertToBar = (
   let newTaskItems: any[] = []
 
   const { taskItems = [] } = task
-  let typeInternal: TaskTypeInternal = task.type;
+  
   if (rtl) {
     x2 = taskXCoordinateRTL(task.start, dates, columnWidth);
     x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
@@ -187,8 +187,10 @@ const convertToBar = (
     if(taskItems.length > 0) {
       let _y = rowY
       taskItems.forEach((taskItemConfig, itemIndex) => {
-        x1 =  taskXCoordinate(taskItemConfig.start, dates, columnWidth),
-        x2 = taskXCoordinate(taskItemConfig.end, dates, columnWidth)
+        let typeInternal: TaskTypeInternal = task.type;
+
+        x1 =  taskItemConfig.start ? taskXCoordinate(taskItemConfig.start, dates, columnWidth) : 0,
+        x2 = taskItemConfig.end ? taskXCoordinate(taskItemConfig.end, dates, columnWidth) : 0
 
         const [progressWidth, progressX] = progressWithByParams(
           x1,
@@ -202,16 +204,19 @@ const convertToBar = (
           x2 = x1 + handleWidth * 2;
         }
 
+        if(!x1 || !x2) {
+          typeInternal = "milestone";
+        }
+
         if(itemIndex === 0) {
           _y = rowY + topMargin;
         } else {
           _y = _y + 20 + taskSpacing
         }
-        // const y = calcRowTaskY(rowY, 20, itemIndex, itemIndex === 0 ? topMargin : 0, taskSpacing);
 
         newTaskItems.push({
           ...taskItemConfig,
-          x1,
+          x1: x1 || x2,
           x2,
           y: _y,
           progressWidth,
@@ -238,7 +243,7 @@ const convertToBar = (
   };
   return {
     ...task,
-    typeInternal,
+    typeInternal: 'task',
     x1: 0,
     x2: 0,
     y: rowY,
