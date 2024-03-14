@@ -129,8 +129,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   }, [barTasks, rowHeight])
 
   const [scrollY, setScrollY] = useState(0);
-  const [scrollX, setScrollX] = useState(-1);
-  const [scrollTaskListX, setScrollTaskListX] = useState(-1);
+  const [scrollX, setScrollX] = useState(0);
+  const [scrollTaskListX, setScrollTaskListX] = useState(0);
   const [ignoreScrollEvent, setIgnoreScrollEvent] = useState(false);
 
   // task change events
@@ -278,7 +278,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (taskListRef.current) {
       setTaskListWidth(taskListRef.current.offsetWidth);
     }
-  }, [taskListRef, listCellWidth]);
+  }, [taskListRef, listCellWidth, columns?.length]);
 
   useEffect(() => {
     const resized = debounce(function() {  
@@ -301,7 +301,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (wrapperRef.current) {
       setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListWidth);
     }
-  }, [wrapperRef, taskListWidth]);
+  }, [wrapperRef, taskListWidth, columns?.length]);
 
   useEffect(() => {
     if (ganttHeight) {
@@ -383,6 +383,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
 
+  const lastScrollTaskListXRef = useRef(0)
+
   const handleScrollTaskListX = (event: SyntheticEvent<HTMLDivElement>) => {
     // if (scrollX !== event.currentTarget.scrollLeft && !ignoreScrollEvent) {
     //   setScrollX(event.currentTarget.scrollLeft);
@@ -391,7 +393,13 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     //   setIgnoreScrollEvent(false);
     // }
     if (scrollX !== event.currentTarget.scrollLeft) { 
+      // 解决横向拖拽向左的时候，经常不到最左边
+      if(lastScrollTaskListXRef.current > event.currentTarget.scrollLeft && event.currentTarget.scrollLeft < 70) {
+        setScrollTaskListX(0)
+        return
+      }
       setScrollTaskListX(event.currentTarget.scrollLeft); 
+      lastScrollTaskListXRef.current = event.currentTarget.scrollLeft
       setIgnoreScrollEvent(true); 
     } else { 
       setIgnoreScrollEvent(false); 
@@ -613,7 +621,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         offsetWidth={svgContainerWidth}
         scroll={scrollTaskListX}
         rtl={rtl}
-        style={{ margin: `-13px ${svgContainerWidth}px 0px 0px` }}
+        style={{ margin: `-12px ${svgContainerWidth}px 0px 0px` }}
         onScroll={handleScrollTaskListX}
       />
     </div>

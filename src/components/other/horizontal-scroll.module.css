@@ -6,8 +6,8 @@
   scrollbar-width: thin;
   /*iPad*/
   height: 12px;
-  border-top: 1px solid #d9d9d9;
-  border-right: 1px solid #d9d9d9;
+  /* border-top: 1px solid #d9d9d9;
+  border-right: 1px solid #d9d9d9; */
 }
 .scrollWrapper::-webkit-scrollbar {
   width: 1.1rem;
