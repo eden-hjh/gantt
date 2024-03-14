@@ -25,12 +25,14 @@ export const Bar: React.FC<TaskItemProps> = ({
   const barDisplaystyles = { ...task.styles, ...taskItemConfig.styles}
   // console.log('styles', taskItemConfig, barDisplaystyles, task.styles, taskItemConfig.styles)
 
+  const _width = taskItemConfig.x2 - taskItemConfig.x1
+
   return (
     <g className={styles.barWrapper} tabIndex={0}>
       <BarDisplay
         x={taskItemConfig.x1}
         y={taskItemConfig.y}
-        width={taskItemConfig.x2 - taskItemConfig.x1}
+        width={_width > 0 ? _width : 0}
         height={taskItemConfig.height}
         progressX={taskItemConfig.progressX}
         progressWidth={taskItemConfig.progressWidth}

@@ -233,6 +233,7 @@ export const Calendar: React.FC<CalendarProps> = ({
 
       bottomValues.push(
         <rect
+          key={'day'+date.getTime()}
           width={columnWidth} 
           height="44"  
           y={headerHeight * 0.5 - 1}
@@ -245,7 +246,7 @@ export const Calendar: React.FC<CalendarProps> = ({
       const isToday = +startOfDate(new Date(), "day") === +date 
       bottomValues.push(
         <text
-          key={date.getTime()}
+          key={'text' + date.getTime()}
           x={columnWidth * i + columnWidth * 0.5}
           className={styles.calendarBottomText}
         >

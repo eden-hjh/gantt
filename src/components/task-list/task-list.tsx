@@ -14,6 +14,7 @@ export type TaskListProps = {
   rowCount?: number;
   ganttHeight: number;
   scrollY: number;
+  scrollTaskListX: number;
   locale: string;
   tasks: Task[];
   taskListRef: React.RefObject<HTMLDivElement>;
@@ -54,6 +55,7 @@ export const TaskList: React.FC<TaskListProps> = ({
   rowHeight,
   rowCount,
   scrollY,
+  scrollTaskListX,
   tasks,
   selectedTask,
   setSelectedTask,
@@ -72,6 +74,12 @@ export const TaskList: React.FC<TaskListProps> = ({
       taskListRef.current.scrollTop = scrollY;
     }
   }, [scrollY]);
+
+  useEffect(() => {
+    if (taskListRef.current) {
+      taskListRef.current.scrollLeft = scrollTaskListX;
+    }
+  }, [scrollTaskListX]);
 
   const headerProps = {
     columns,

@@ -61,7 +61,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   ]);
 
   useEffect(() => {
-    setVisible(true)
+    setVisible(!!task.taskItems?.length)
   }, [task.id])
 
   return ReactDOM.createPortal(
@@ -98,9 +98,9 @@ export const StandardTooltipContent: React.FC<{
     <div className={styles.tooltipDefaultContainer}>
       {
         task?.taskItems?.map(item => {
-          const { styles: itemStyles, name, start, end } = item
+          const { styles: itemStyles, name, start, end, id } = item
           return (
-            <div className={styles.tooltipDefaultContainer_item}>
+            <div className={styles.tooltipDefaultContainer_item} key={id}>
               <div 
                 className={styles.tooltipDefaultContainer_item_color}
                 style={{ background: itemStyles?.backgroundColor }}

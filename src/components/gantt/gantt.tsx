@@ -22,7 +22,7 @@ import { GanttEvent } from "../../types/gantt-task-actions";
 import { DateSetup } from "../../types/date-setup";
 import { HorizontalScroll } from "../other/horizontal-scroll";
 import { removeHiddenTasks, sortTasks } from "../../helpers/other-helper";
-// import classnames from 'classnames'
+import classnames from 'classnames'
 // import { SplitPanel } from '@kdcloudjs/kdesign'
 import { debounce } from '../../helpers'
 import styles from "./gantt.module.css";
@@ -109,6 +109,10 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   }
 
   const svgWidth = dateSetup.dates.length * columnWidth;
+  const taskWidth = columns.reduce((count, pre) => {
+    return (pre.width || 160) + count
+  }, 0)
+
   const ganttFullHeight = useMemo(() => {
     const _fullHeight =  barTasks.reduce((pre, curTask) => {
       if(curTask.taskItems?.length) {
@@ -126,6 +130,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
   const [scrollY, setScrollY] = useState(0);
   const [scrollX, setScrollX] = useState(-1);
+  const [scrollTaskListX, setScrollTaskListX] = useState(-1);
   const [ignoreScrollEvent, setIgnoreScrollEvent] = useState(false);
 
   // task change events
@@ -319,12 +324,13 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         }
         setScrollX(newScrollX);
         event.preventDefault();
-      } else if (ganttHeight) {
+      } else {
+        // 滑轮滚动
         let newScrollY = scrollY + event.deltaY;
         if (newScrollY < 0) {
           newScrollY = 0;
-        } else if (newScrollY > ganttFullHeight - ganttHeight) {
-          newScrollY = ganttFullHeight - ganttHeight;
+        } else if (newScrollY > ganttFullHeight) {
+          newScrollY = ganttFullHeight;
         }
         if (newScrollY !== scrollY) {
           setScrollY(newScrollY);
@@ -371,6 +377,21 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     // }
     if (scrollX !== event.currentTarget.scrollLeft) { 
       setScrollX(event.currentTarget.scrollLeft); 
+      setIgnoreScrollEvent(true); 
+    } else { 
+      setIgnoreScrollEvent(false); 
+    }
+  };
+
+  const handleScrollTaskListX = (event: SyntheticEvent<HTMLDivElement>) => {
+    // if (scrollX !== event.currentTarget.scrollLeft && !ignoreScrollEvent) {
+    //   setScrollX(event.currentTarget.scrollLeft);
+    //   setIgnoreScrollEvent(true);
+    // } else {
+    //   setIgnoreScrollEvent(false);
+    // }
+    if (scrollX !== event.currentTarget.scrollLeft) { 
+      setScrollTaskListX(event.currentTarget.scrollLeft); 
       setIgnoreScrollEvent(true); 
     } else { 
       setIgnoreScrollEvent(false); 
@@ -505,6 +526,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     locale,
     headerHeight,
     scrollY,
+    scrollTaskListX,
     ganttHeight,
     horizontalContainerClass: styles.task_horizontalContainer,
     selectedTask,
@@ -519,8 +541,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
 
   return (
     <div
-      style={{ height: '100%', display: "flex", flexDirection: 'column' }}
-      className={className}
+      className={classnames(styles.gantt, className)}
     >
       <div
         className={styles.wrapper}
@@ -581,11 +602,19 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         />
       </div>
       <HorizontalScroll
-        svgWidth={svgWidth}
-        taskListWidth={taskListWidth}
+        scrollWidth={svgWidth}
+        offsetWidth={taskListWidth}
         scroll={scrollX}
         rtl={rtl}
         onScroll={handleScrollX}
+      />
+      <HorizontalScroll
+        scrollWidth={taskWidth}
+        offsetWidth={svgContainerWidth}
+        scroll={scrollTaskListX}
+        rtl={rtl}
+        style={{ margin: `-13px ${svgContainerWidth}px 0px 0px` }}
+        onScroll={handleScrollTaskListX}
       />
     </div>
   );

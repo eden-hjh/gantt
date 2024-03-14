@@ -1,3 +1,10 @@
+.gantt {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d9d9d9;
+}
+
 .ganttVerticalContainer {
   overflow: hidden;
   font-size: 0;
@@ -41,9 +48,5 @@
   list-style: none;
   outline: none;
   position: relative;
-  border-bottom: 1px solid #d9d9d9;
-  border-left: 1px solid #d9d9d9;
-  border-right: 1px solid #d9d9d9;
-  border-top: 1px solid #d9d9d9;
   overflow: hidden;
 }
