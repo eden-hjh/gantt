@@ -8,6 +8,7 @@
   overflow-y: hidden;
   min-width: 240px;
   max-width: 60%;
+  flex-shrink: 0;
 }
 
 /* .taskList::-webkit-scrollbar-vertical {  
