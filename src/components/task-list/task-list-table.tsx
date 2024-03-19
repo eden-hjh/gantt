@@ -9,7 +9,7 @@
 import React, { useMemo } from "react";
 import styles from "./task-list-table.module.css";
 import { Task } from "../../types/public-types";
-import { GanttEvent } from "../../types/gantt-task-actions";
+import { GanttEvent, GanttContentMoveAction } from "../../types/gantt-task-actions";
 import classnames from 'classnames'
 import { calcRowTaskHeight } from '../../helpers/bar-helper'
 // import { BarTask } from "../../types/bar-task";
@@ -46,6 +46,7 @@ export const TaskListTableDefault: React.FC<{
   tasks: Task[];
   selectedTaskId: string;
   ganttEvent: GanttEvent;
+  setGanttEvent: (value: GanttEvent) => void;
   setSelectedTask: (taskId: string) => void;
   onExpanderClick: (task: Task) => void;
 }> = ({
@@ -57,7 +58,8 @@ export const TaskListTableDefault: React.FC<{
   fontSize,
   // locale,
   // onExpanderClick,
-  ganttEvent
+  ganttEvent,
+  setGanttEvent
 }) => {
   // const toLocaleDateString = useMemo(
   //   () => toLocaleDateStringFactory(locale),
@@ -81,7 +83,27 @@ export const TaskListTableDefault: React.FC<{
     return newColums
   }, [columns])
 
-  
+  const onEventStart = (
+    action: GanttContentMoveAction,
+    task: any,
+    event?: React.MouseEvent
+  ) => {
+    if (action === "row_mouseenter") {
+      if (!ganttEvent.action || ganttEvent.action === 'row_mouseenter') {
+        setTimeout(() => {
+          setGanttEvent({
+            action,
+            hoverTask: task,
+            event
+          });
+        })
+      }
+    } else if (action === "row_mouseleave") {
+      if (ganttEvent.action === "row_mouseenter" && ganttEvent.hoverTask?.id === task.id) {
+        setGanttEvent({ action: "", hoverTask: undefined });
+      }
+    }
+  }
 
   return (
     <div
@@ -106,6 +128,14 @@ export const TaskListTableDefault: React.FC<{
             className={styles.taskListTableRow}
             style={{ height: calcRowTaskHeight(20, taskItemsCount, 12, 12) }}
             key={`${t.id}row`}
+            onMouseEnter={(e: React.MouseEvent) => {
+              e.persist()
+              onEventStart("row_mouseenter", t, e);
+            }}
+            onMouseLeave={(e: React.MouseEvent) => {
+              e.persist()
+              onEventStart("row_mouseleave", t, e);
+            }}
           >
             {
               _columns?.map((column) => {

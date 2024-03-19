@@ -42,8 +42,10 @@ export type TaskListProps = {
     ganttEvent: GanttEvent;
     setSelectedTask: (taskId: string) => void;
     onExpanderClick: (task: Task) => void;
+    setGanttEvent: (value: GanttEvent) => void;
   }>;
   ganttEvent: GanttEvent;
+  setGanttEvent: (value: GanttEvent) => void;
 };
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -66,7 +68,8 @@ export const TaskList: React.FC<TaskListProps> = ({
   horizontalContainerClass,
   TaskListHeader,
   TaskListTable,
-  ganttEvent
+  ganttEvent,
+  setGanttEvent
 }) => {
   const horizontalContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -100,6 +103,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     locale,
     selectedTaskId: selectedTaskId,
     ganttEvent,
+    setGanttEvent,
     setSelectedTask,
     onExpanderClick,
   };

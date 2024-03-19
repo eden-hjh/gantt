@@ -77,24 +77,48 @@ export const ganttDateRange = (
   viewMode: ViewMode,
   preStepsCount: number
 ) => {
-  let newStartDate: Date  = new Date(0)
-  let newEndDate: Date = new Date(0)
+  let firstStartTime = new Date(0)
 
-  for(let i = 0; i < tasks.length; i++) {
-    const { taskItems = [] } = tasks[i] || {}
-    for(let j = 0; j < taskItems.length; j++) {
-      const { start, end } = taskItems[j]
-      if(newStartDate !== new Date(0) && start) {
-        newStartDate = start
-      }
-      if(newEndDate !== new Date(0) && end) {
-        newEndDate = end
-      }
-      if(newStartDate !== new Date(0) && newEndDate !== new Date(0)) {
+  for (let i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+
+    const taskItems = task.taskItems || []
+    
+    let isFind = false 
+
+    for (let j = 0; j < taskItems.length; j++) {
+      const taskItem = taskItems[j];
+
+      if(taskItem.start) {
+        firstStartTime = taskItem.start
+        isFind = true
         break
       }
     }
+
+    if(isFind) {
+      break
+    }
   }
+
+  let newStartDate: Date  = firstStartTime
+  let newEndDate: Date = firstStartTime
+
+  // for(let i = 0; i < tasks.length; i++) {
+  //   const { taskItems = [] } = tasks[i] || {}
+  //   for(let j = 0; j < taskItems.length; j++) {
+  //     const { start, end } = taskItems[j]
+  //     if(newStartDate !== new Date(0) && start) {
+  //       newStartDate = start
+  //     }
+  //     if(newEndDate !== new Date(0) && end) {
+  //       newEndDate = end
+  //     }
+  //     if(newStartDate !== new Date(0) && newEndDate !== new Date(0)) {
+  //       break
+  //     }
+  //   }
+  // }
 
   // 获取最小和最大的时间
   for (const task of tasks) {
@@ -141,6 +165,7 @@ export const ganttDateRange = (
       newEndDate = addToDate(newEndDate, 1.5, "month");
       break;
     case ViewMode.Day:
+      // console.log('newEndDate1', newStartDate, newEndDate)
       const startDataDay = newStartDate.getDate()
       newStartDate = startOfDate(newStartDate, "day");
       newStartDate = addToDate(newStartDate, -1 * startDataDay * preStepsCount, "day");
@@ -152,6 +177,8 @@ export const ganttDateRange = (
 
       newEndDate = startOfDate(newEndDate, "day");
       newEndDate = addToDate(newEndDate, apartDay + 1, "day");
+
+      // console.log('newEndDate2', newStartDate, newEndDate)
       break;
     case ViewMode.QuarterDay:
       newStartDate = startOfDate(newStartDate, "day");

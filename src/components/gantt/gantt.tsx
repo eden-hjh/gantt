@@ -544,7 +544,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     TaskListHeader,
     TaskListTable,
     columns,
-    ganttEvent
+    ganttEvent,
+    setGanttEvent,
   };
 
   return (
