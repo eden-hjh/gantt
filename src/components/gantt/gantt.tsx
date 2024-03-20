@@ -383,8 +383,6 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
 
-  const lastScrollTaskListXRef = useRef(0)
-
   const handleScrollTaskListX = (event: SyntheticEvent<HTMLDivElement>) => {
     // if (scrollX !== event.currentTarget.scrollLeft && !ignoreScrollEvent) {
     //   setScrollX(event.currentTarget.scrollLeft);
@@ -392,14 +390,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     // } else {
     //   setIgnoreScrollEvent(false);
     // }
-    if (scrollX !== event.currentTarget.scrollLeft) { 
-      // 解决横向拖拽向左的时候，经常不到最左边
-      if(lastScrollTaskListXRef.current > event.currentTarget.scrollLeft && event.currentTarget.scrollLeft < 70) {
-        setScrollTaskListX(0)
-        return
-      }
+    if (scrollTaskListX !== event.currentTarget.scrollLeft) { 
       setScrollTaskListX(event.currentTarget.scrollLeft); 
-      lastScrollTaskListXRef.current = event.currentTarget.scrollLeft
       setIgnoreScrollEvent(true); 
     } else { 
       setIgnoreScrollEvent(false); 
