@@ -8,6 +8,7 @@ type TopPartOfCalendarProps = {
   y2Line: number;
   xText: number;
   yText: number;
+  hideLine?: boolean;
 };
 
 export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
@@ -17,17 +18,22 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
   y2Line,
   xText,
   yText,
+  hideLine
 }) => {
   return (
     <g className="calendarTop">
-      <line
-        x1={x1Line}
-        y1={y1Line}
-        x2={x1Line}
-        y2={y2Line}
-        className={styles.calendarTopTick}
-        key={value + "line"}
-      />
+      {
+        !hideLine && (
+          <line
+            x1={x1Line}
+            y1={y1Line}
+            x2={x1Line}
+            y2={y2Line}
+            className={styles.calendarTopTick}
+            key={value + "line"}
+          />
+        )
+      }
       <text
         key={value + "text"}
         y={yText}

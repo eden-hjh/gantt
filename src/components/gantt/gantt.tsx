@@ -278,7 +278,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (taskListRef.current) {
       setTaskListWidth(taskListRef.current.offsetWidth);
     }
-  }, [taskListRef, listCellWidth, columns?.length]);
+  }, [taskListRef, listCellWidth, columns]);
 
   useEffect(() => {
     const resized = debounce(function() {  
@@ -301,7 +301,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (wrapperRef.current) {
       setSvgContainerWidth(wrapperRef.current.offsetWidth - taskListWidth);
     }
-  }, [wrapperRef, taskListWidth, columns?.length]);
+  }, [wrapperRef, taskListWidth, dateSetup.dates]);
 
   useEffect(() => {
     if (ganttHeight) {

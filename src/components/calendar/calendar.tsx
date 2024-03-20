@@ -282,11 +282,19 @@ export const Calendar: React.FC<CalendarProps> = ({
       }
 
       if (
-        i + 1 !== dates.length &&
-        date.getMonth() !== dates[i + 1].getMonth()
+        (
+        date.getMonth() !== dates[i + 1]?.getMonth())
       ) {
         const topValue = getLocaleMonth(date, locale);
         const curYear = getLocaleYear(date, locale)
+
+        let xText = columnWidth * (i + 1) - getDaysInMonth(date.getMonth(), date.getFullYear()) * columnWidth + 50
+
+        // if(i === 0 && (date.getDate() !== 1)) {
+        //   xText = 44
+        // }
+
+        // console.log(i, xText)
 
         topValues.push(
           <TopPartOfCalendar
@@ -296,11 +304,10 @@ export const Calendar: React.FC<CalendarProps> = ({
             y1Line={0}
             y2Line={headerHeight * 0.5}
             xText={
-              columnWidth * (i + 1) -
-              getDaysInMonth(date.getMonth(), date.getFullYear()) *
-                columnWidth + 50
+              xText
             }
             yText={topDefaultHeight * 0.9}
+            // hideLine={i === 0 && (date.getDate() !== 1)}
           />
         );
       }

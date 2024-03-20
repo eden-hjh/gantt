@@ -77,32 +77,23 @@ export const ganttDateRange = (
   viewMode: ViewMode,
   preStepsCount: number
 ) => {
-  let firstStartTime = new Date(0)
+  let firstExistTime
 
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
 
     const taskItems = task.taskItems || []
-    
-    let isFind = false 
 
-    for (let j = 0; j < taskItems.length; j++) {
-      const taskItem = taskItems[j];
+    const exsitTimeTaskItem = taskItems.find(taskItem => (taskItem.start || taskItem.end))
 
-      if(taskItem.start) {
-        firstStartTime = taskItem.start
-        isFind = true
-        break
-      }
-    }
-
-    if(isFind) {
+    if(exsitTimeTaskItem && (exsitTimeTaskItem.start || exsitTimeTaskItem.end)) {
+      firstExistTime = exsitTimeTaskItem.start || exsitTimeTaskItem.end
       break
     }
   }
 
-  let newStartDate: Date  = firstStartTime
-  let newEndDate: Date = firstStartTime
+  let newStartDate: Date | undefined  = firstExistTime || new Date()
+  let newEndDate: Date | undefined = firstExistTime || new Date()
 
   // for(let i = 0; i < tasks.length; i++) {
   //   const { taskItems = [] } = tasks[i] || {}
@@ -124,11 +115,21 @@ export const ganttDateRange = (
   for (const task of tasks) {
     const { taskItems = []} = task
     for(const taskItemConfig of taskItems) {
-      if (taskItemConfig.start < newStartDate) {
-        newStartDate = taskItemConfig.start;
+      let _startTime = taskItemConfig.start
+      let _endTime = taskItemConfig.end
+
+      // 开始时间和结束时候有可能不存在，那么需要拿存在的做比较
+      if(_startTime && !_endTime) {
+        _endTime = _startTime
+      } else if(!_startTime && _endTime) {
+        _startTime = _endTime
       }
-      if (taskItemConfig.end > newEndDate) {
-        newEndDate = taskItemConfig.end;
+
+      if (_startTime < newStartDate) {
+        newStartDate = _startTime;
+      }
+      if (_endTime > newEndDate) {
+        newEndDate = _endTime;
       }
     }
   }
@@ -165,18 +166,22 @@ export const ganttDateRange = (
       newEndDate = addToDate(newEndDate, 1.5, "month");
       break;
     case ViewMode.Day:
+      // 前后渲染满一个月
       // console.log('newEndDate1', newStartDate, newEndDate)
       const startDataDay = newStartDate.getDate()
+      // const startDaysInMonth = getDaysInMonth(newStartDate.getMonth(), newStartDate.getFullYear())
+      // 用当前月份多少天，减去结束日期当天。用于渲染当月后续不足的天数
+      // const startApartDay = startDaysInMonth - startDataDay
       newStartDate = startOfDate(newStartDate, "day");
-      newStartDate = addToDate(newStartDate, -1 * startDataDay * preStepsCount, "day");
+      newStartDate = addToDate(newStartDate, -1 * (startDataDay === 1 ? startDataDay : startDataDay - 1), "day");
 
-      const daysInMonth = getDaysInMonth(newEndDate.getMonth(), newEndDate.getFullYear())
+      const endDaysInMonth = getDaysInMonth(newEndDate.getMonth(), newEndDate.getFullYear())
       const newEndDay = newEndDate.getDate()
       // 用当前月份多少天，减去结束日期当天。用于渲染当月后续不足的天数
-      const apartDay = daysInMonth - newEndDay
+      const endApartDay = endDaysInMonth - newEndDay
 
       newEndDate = startOfDate(newEndDate, "day");
-      newEndDate = addToDate(newEndDate, apartDay + 1, "day");
+      newEndDate = addToDate(newEndDate, endApartDay === 0 ? endApartDay + 1 : endApartDay, "day");
 
       // console.log('newEndDate2', newStartDate, newEndDate)
       break;

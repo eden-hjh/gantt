@@ -206,6 +206,8 @@ const convertToBar = (
 
         if(!x1 || !x2) {
           typeInternal = "milestone";
+          // 这里是因为天都是从0点开始，因此x1或者x2是定位在最左侧。因此要想定位在列中间，11是估计的一个值
+          x1 = (x1 || x2) + 11
         }
 
         if(itemIndex === 0) {
