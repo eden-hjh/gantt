@@ -103,10 +103,14 @@ export const TaskItem: React.FC<TaskItemProps> = props => {
         e.stopPropagation();
       }}
       onMouseEnter={e => {
-        onEventStart("mouseenter", task, e);
+        // onEventStart("mouseenter", task, e);
+        e.persist()
+        onEventStart("row_mouseenter", task, e);
       }}
       onMouseLeave={e => {
-        onEventStart("mouseleave", task, e);
+        // onEventStart("mouseleave", task, e);
+        e.persist()
+        onEventStart("row_mouseleave", task, e);
       }}
       onDoubleClick={e => {
         onEventStart("dblclick", task, e);

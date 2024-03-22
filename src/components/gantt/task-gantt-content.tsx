@@ -2,7 +2,7 @@
  * @Author: jianhang_he jianhang_he@kingdee.com
  * @Date: 2024-02-20 16:05:14
  * @LastEditors: jianhang_he jianhang_he@kingdee.com
- * @LastEditTime: 2024-03-19 16:21:51
+ * @LastEditTime: 2024-03-22 10:43:48
  * @FilePath: \gantt-task-react\src\components\gantt\task-gantt-content.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -263,6 +263,20 @@ export const TaskGanttContent: React.FC<TaskGanttContentProps> = ({
         changedTask: task,
         originalSelectedTask: task,
       });
+    } else if (action === "row_mouseenter") {
+      if (!ganttEvent.action || ganttEvent.action === 'row_mouseenter') {
+        setTimeout(() => {
+          setGanttEvent({
+            action,
+            hoverTask: task,
+            event
+          });
+        })
+      }
+    } else if (action === "row_mouseleave") {
+      if (ganttEvent.action === "row_mouseenter" && ganttEvent.hoverTask?.id === task.id) {
+        setGanttEvent({ action: "", hoverTask: undefined });
+      }
     } else {
       setGanttEvent({
         action,
