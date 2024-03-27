@@ -146,8 +146,8 @@ export const ganttDateRange = (
     case ViewMode.QuarterYear:
       newStartDate = addToDate(newStartDate, -3, "month");
       newStartDate = startOfDate(newStartDate, "month");
-      newEndDate = addToDate(newEndDate, 3, "year");
-      newEndDate = startOfDate(newEndDate, "year");
+      newEndDate = addToDate(newEndDate, 3, "month");
+      newEndDate = startOfDate(newEndDate, "month");
       break;
     case ViewMode.Month:
       newStartDate = addToDate(newStartDate, -1 * preStepsCount, "month");
@@ -331,23 +331,40 @@ export const getColumnWidthByViewMode = (viewMode: ViewMode) => {
   return columnWidth
 }
 
-export const getTodayXByTimeMode = (viewMode: ViewMode) => {
-  const columnWidth = getColumnWidthByViewMode(viewMode)
+export const oneDayTime = 86400000;  // 1000 * 60 * 60 * 24  一天有多少毫秒
 
-  let percentage = 0.5
+export const getTodayXByTimeMode = (viewMode: ViewMode) => {
   const now = new Date()
 
-  if (viewMode === ViewMode.Year) {
-  } else if (viewMode === ViewMode.Month) {
-  } else if (viewMode === ViewMode.Week) {
-  } else {
-    const curMonth = now.getMonth()
-    const curYear = now.getMonth()
-    const curDate = now.getDate()
+  const columnWidth = getDateColumnWidthByViewMode(viewMode, now)
 
+  let percentage = 0.5
+  
+  const curMonth = now.getMonth()
+  const curYear = now.getFullYear()
+  const curDate = now.getDate()
+  const startOfYear = new Date(curYear, 0, 0);
+  const diff = +now - +startOfYear;
+
+  if (viewMode === ViewMode.Year) {
+    const days = getDaysInYear(curYear)
+
+    percentage = diff / (days * oneDayTime)
+  } else if (viewMode === ViewMode.QuarterYear) {
+    const days = getDaysInCurrentQuarter(now)
+
+    // 获取当前季度的第一天  
+    const firstDayOfQuarter = new Date(curYear, curMonth - (curMonth % 3), 1);  
+  
+    // 计算今天是当前季度的第几天  
+    const diff = +now - +firstDayOfQuarter;
+
+    percentage = diff / (days * oneDayTime)
+  } else if (viewMode === ViewMode.Month) {
     const days = getDaysInMonth(curMonth, curYear)
 
-    percentage = 0.5 || curDate / days
+    percentage = curDate / days
+  } else if (viewMode === ViewMode.Week) {
   }
 
   const x = percentage * columnWidth
@@ -355,7 +372,7 @@ export const getTodayXByTimeMode = (viewMode: ViewMode) => {
   return x
 }
 
-export const formatData = (date: Date) => {
+export const formatDate = (date: Date) => {
   const month = getPaddedNumber(date.getMonth() + 1)
   const day = getPaddedNumber(date.getDate())
   return `${date.getFullYear()}${month}${day}`
@@ -374,3 +391,105 @@ export const getDaysBetweenDates = (date1: Date, date2: Date) => {
 
   return days;  
 }
+
+// 是否闰年
+export const isLeapYear = (year: number): boolean => {  
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;  
+}  
+
+// 获取一年有多少天
+export const getDaysInYear = (year: number): number => {  
+  return isLeapYear(year) ? 366 : 365;  
+}
+
+const dayColumnWidthInViewMode = {
+  [ViewMode.Day]: 44,
+  [ViewMode.Week]: 24,
+  [ViewMode.Month]: 8,
+  [ViewMode.QuarterYear]: 3,
+  [ViewMode.Year]: 1
+}
+
+// 获取月的行宽度
+export const getMonthColumnWidth = (viewMode: ViewMode, date: Date): number => {
+  const dayColumnWidth = dayColumnWidthInViewMode[viewMode] || dayColumnWidthInViewMode[ViewMode.Day]
+
+  const daysInMonth = getDaysInMonth(date.getMonth(), date.getFullYear())
+
+  return daysInMonth * dayColumnWidth
+}
+
+// 获取年的行宽度
+export const getYearColumnWidth = (viewMode: ViewMode, date: Date): number => {
+  const dayColumnWidth = dayColumnWidthInViewMode[viewMode] || dayColumnWidthInViewMode[ViewMode.Day]
+
+  const daysInYear = getDaysInYear(date.getFullYear())
+
+  return daysInYear * dayColumnWidth
+}
+
+// 获取当前时间是第几季度
+export const getQuarter = (date: Date) => {  
+  // 获取月份（注意：JavaScript 月份是从 0 开始的，所以 1 代表二月）  
+  var month = date.getMonth();  
+    
+  // 根据月份计算季度  
+  var quarter = Math.ceil((month + 1) / 3);  
+    
+  return quarter;  
+}
+
+// 获取一个季度有多少天
+export const getDaysInCurrentQuarter = (date: Date) => {
+  const year = date.getFullYear();
+  const quarter = getQuarter(date);  
+    
+  // 定义每个月的天数，注意2月需要根据闰年判断  
+  const daysInMonth = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];  
+    
+  // 计算当前季度的起始月份和结束月份  
+  const startMonth = (quarter - 1) * 3;  
+  const endMonth = startMonth + 2; // 季度包含3个月  
+    
+  // 计算当前季度的总天数  
+  let daysInQuarter = 0;  
+  for (let i = startMonth; i <= endMonth; i++) {  
+      daysInQuarter += daysInMonth[i];  
+  }  
+    
+  return daysInQuarter;  
+}
+
+export const getDateColumnWidthByViewMode = (viewMode: ViewMode, date: Date): number => {
+  const curYear = date.getFullYear()
+
+  const columnWidthByViewMode = {
+    [ViewMode.Day]: dayColumnWidthInViewMode[ViewMode.Day],
+    [ViewMode.Week]: dayColumnWidthInViewMode[ViewMode.Week] * 7,
+    [ViewMode.Month]: dayColumnWidthInViewMode[ViewMode.Month] * getDaysInMonth(date.getMonth(), curYear),
+    [ViewMode.QuarterYear]: dayColumnWidthInViewMode[ViewMode.QuarterYear] * getDaysInCurrentQuarter(date),
+    [ViewMode.Year]: dayColumnWidthInViewMode[ViewMode.Year] * getDaysInYear(curYear)
+  }
+
+  return columnWidthByViewMode[viewMode] || columnWidthByViewMode[ViewMode.Day]
+}
+
+export const getDateIsActive = (date: Date, viewMode: ViewMode): boolean => {
+  const now = new Date()
+  const nowStartDate = startOfDate(now, "day")
+
+  if (viewMode === ViewMode.Year) {
+    return nowStartDate.getFullYear() === date.getFullYear()
+  } else if (viewMode === ViewMode.QuarterYear) {
+    return nowStartDate.getFullYear() === date.getFullYear() && getQuarter(nowStartDate) === getQuarter(date)
+  } else if (viewMode === ViewMode.Month) {
+    return nowStartDate.getFullYear() === date.getFullYear() && nowStartDate.getMonth() === date.getMonth()
+  } else if (viewMode === ViewMode.Week) {
+    const oneWeekTime = 604800000 // 一周的毫秒数 60 * 60 * 24 * 1000 * 7
+
+    // 拿当周开始的时间比较，当前的时间 - 当周开始的时候小于一周的毫秒数的时候，那么就认为当前时间在当周内 
+    return ((+date) < (+nowStartDate)) && ((+nowStartDate) - (+date) <= oneWeekTime)
+  } else {
+    return +nowStartDate === +date
+  }
+} 

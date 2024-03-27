@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import ReactDOM from 'react-dom'
 import { Task } from "../../types/public-types";
 import { BarTask } from "../../types/bar-task";
-import { formatData, getDaysBetweenDates } from '../../helpers/date-helper'
+import { formatDate, getDaysBetweenDates } from '../../helpers/date-helper'
 // import usePopper from "../../helpers/usePoper";
 import DropDownPanel from './dropdown-panel'
 // import { Tooltip as BaseTooltip } from '@kdcloudjs/kdesign'
@@ -105,7 +105,7 @@ export const StandardTooltipContent: React.FC<{
                 className={styles.tooltipDefaultContainer_item_color}
                 style={{ background: itemStyles?.backgroundColor }}
               ></div>
-              <div className={styles.tooltipDefaultContainer_item_name}>{name}：{start ? formatData(start) : ''}-{end ? formatData(end) : ''}</div>
+              <div className={styles.tooltipDefaultContainer_item_name}>{name}：{start ? formatDate(start) : ''}-{end ? formatDate(end) : ''}</div>
               <div>共{getDaysBetweenDates(end, start)}天</div>
             </div>
           )

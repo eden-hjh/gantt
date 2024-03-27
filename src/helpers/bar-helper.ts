@@ -1,6 +1,7 @@
-import { Task } from "../types/public-types";
+import { Task, ViewMode } from "../types/public-types";
 import { BarTask, TaskTypeInternal } from "../types/bar-task";
 import { BarMoveAction } from "../types/gantt-task-actions";
+import { getDateColumnWidthByViewMode } from "./date-helper";
 
 export const calcRowTaskHeight = (taskHeight: number, taskItemsLen: number, topMargin: number, taskSpacing: number) => {
   return taskItemsLen * taskHeight + taskItemsLen * taskSpacing + topMargin
@@ -29,6 +30,7 @@ export const convertToBarTasks = (
   projectBackgroundSelectedColor: string,
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string,
+  viewMode: ViewMode
 ) => {
   let rowY = 0
   let barTasks = tasks.map((t, i) => {
@@ -53,6 +55,7 @@ export const convertToBarTasks = (
       milestoneBackgroundColor,
       milestoneBackgroundSelectedColor,
       rowY,
+      viewMode
     );
 
     const taskItemsLen = t.taskItems?.length || 1
@@ -96,7 +99,8 @@ const convertToBarTask = (
   projectBackgroundSelectedColor: string,
   milestoneBackgroundColor: string,
   milestoneBackgroundSelectedColor: string,
-  rowY: number
+  rowY: number,
+  viewMode: ViewMode
 ): BarTask => {
   let barTask: BarTask;
   switch (task.type) {
@@ -105,13 +109,13 @@ const convertToBarTask = (
         task,
         index,
         dates,
-        columnWidth,
         rowHeight,
         taskHeight,
         barCornerRadius,
         handleWidth,
         milestoneBackgroundColor,
-        milestoneBackgroundSelectedColor
+        milestoneBackgroundSelectedColor,
+        viewMode
       );
       break;
     case "project":
@@ -129,7 +133,8 @@ const convertToBarTask = (
         projectProgressSelectedColor,
         projectBackgroundColor,
         projectBackgroundSelectedColor,
-        0
+        0,
+        viewMode
       );
       break;
     default:
@@ -148,6 +153,7 @@ const convertToBarTask = (
         barBackgroundColor,
         barBackgroundSelectedColor,
         rowY,
+        viewMode
       );
       break;
   }
@@ -169,6 +175,7 @@ const convertToBar = (
   barBackgroundColor: string,
   barBackgroundSelectedColor: string,
   rowY: number,
+  viewMode: ViewMode
 ): BarTask => {
   const topMargin = 12
   const taskSpacing = 12
@@ -181,16 +188,16 @@ const convertToBar = (
   const { taskItems = [] } = task
   
   if (rtl) {
-    x2 = taskXCoordinateRTL(task.start, dates, columnWidth);
-    x1 = taskXCoordinateRTL(task.end, dates, columnWidth);
+    x2 = taskXCoordinateRTL(task.start, dates, columnWidth, viewMode);
+    x1 = taskXCoordinateRTL(task.end, dates, columnWidth, viewMode);
   } else {
     if(taskItems.length > 0) {
       let _y = rowY
       taskItems.forEach((taskItemConfig, itemIndex) => {
         let typeInternal: TaskTypeInternal = task.type;
 
-        x1 =  taskItemConfig.start ? taskXCoordinate(taskItemConfig.start, dates, columnWidth) : 0,
-        x2 = taskItemConfig.end ? taskXCoordinate(taskItemConfig.end, dates, columnWidth) : 0
+        x1 =  taskItemConfig.start ? taskXCoordinate(taskItemConfig.start, dates, viewMode) : 0,
+        x2 = taskItemConfig.end ? taskXCoordinate(taskItemConfig.end, dates, viewMode) : 0
 
         const [progressWidth, progressX] = progressWithByParams(
           x1,
@@ -266,15 +273,15 @@ const convertToMilestone = (
   task: Task,
   index: number,
   dates: Date[],
-  columnWidth: number,
   rowHeight: number,
   taskHeight: number,
   barCornerRadius: number,
   handleWidth: number,
   milestoneBackgroundColor: string,
-  milestoneBackgroundSelectedColor: string
+  milestoneBackgroundSelectedColor: string,
+  viewMode: ViewMode
 ): BarTask => {
-  const x = taskXCoordinate(task.start, dates, columnWidth);
+  const x = taskXCoordinate(task.start, dates, viewMode);
   const y = taskYCoordinate(index, rowHeight, taskHeight);
 
   const x1 = x - taskHeight * 0.5;
@@ -308,21 +315,34 @@ const convertToMilestone = (
   };
 };
 
-const taskXCoordinate = (xDate: Date, dates: Date[], columnWidth: number) => {
-  const index = dates.findIndex(d => d.getTime() >= xDate.getTime()) - 1;
+// 计算X的位置
+const taskXCoordinate = (xDate: Date, dates: Date[], viewMode: ViewMode) => {
+  const curDateTime = xDate.getTime()
+  // 当前日期的前一天坐标
+  const index = dates.findIndex(d => d.getTime() >= curDateTime) - 1;
+  // 偏移量
+  const remainderMillis = curDateTime - dates[index]?.getTime();
 
-  const remainderMillis = xDate.getTime() - dates[index]?.getTime();
+  const preDateX = dates.reduce((count, cur, reduceIndex) => {
+    if(index > reduceIndex) {
+      return count + getDateColumnWidthByViewMode(viewMode, cur)
+    }
+    return count
+  }, 0)
+
+  // 占比，偏移量/hou
   const percentOfInterval =
     remainderMillis / (dates[index + 1]?.getTime() - dates[index]?.getTime());
-  const x = index * columnWidth + percentOfInterval * columnWidth;
+  const x = preDateX + percentOfInterval * getDateColumnWidthByViewMode(viewMode, dates[index]);
   return x;
 };
 const taskXCoordinateRTL = (
   xDate: Date,
   dates: Date[],
-  columnWidth: number
+  columnWidth: number,
+  viewMode: ViewMode
 ) => {
-  let x = taskXCoordinate(xDate, dates, columnWidth);
+  let x = taskXCoordinate(xDate, dates, viewMode);
   x += columnWidth;
   return x;
 };

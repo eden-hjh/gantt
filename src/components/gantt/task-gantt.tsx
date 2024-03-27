@@ -2,7 +2,7 @@
  * @Author: jianhang_he jianhang_he@kingdee.com
  * @Date: 2024-02-20 16:05:14
  * @LastEditors: jianhang_he jianhang_he@kingdee.com
- * @LastEditTime: 2024-03-12 15:40:27
+ * @LastEditTime: 2024-03-26 14:28:23
  * @FilePath: \gantt-task-react\src\components\gantt\task-gantt.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -61,15 +61,14 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
       ref={verticalGanttContainerRef}
       dir="ltr"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width={gridProps.svgWidth}
-        height={calendarProps.headerHeight}
-        fontFamily={barProps.fontFamily}
-        style={{ flexShrink: 0 }}
+      <div
+        // width={gridProps.svgWidth}
+        // height={calendarProps.headerHeight}
+        // fontFamily={barProps.fontFamily}
+        style={{ flexShrink: 0, width: gridProps.svgWidth, height: calendarProps.headerHeight  }}
       >
         <Calendar {...calendarProps} />
-      </svg>
+      </div>
       <div
         ref={horizontalContainerRef}
         className={styles.gantt_horizontalContainer}
@@ -85,6 +84,10 @@ export const TaskGantt: React.FC<TaskGanttProps> = ({
           height={_ganttFullHeight}
           fontFamily={barProps.fontFamily}
           ref={ganttSVGRef}
+          style={{
+            width: gridProps.svgWidth,
+            height: _ganttFullHeight
+          }}
         >
           <Grid {...gridProps} ganttFullHeight={_ganttFullHeight}/>
           <TaskGanttContent {...newBarProps} />

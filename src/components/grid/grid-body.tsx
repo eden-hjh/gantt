@@ -1,6 +1,6 @@
 import React, { ReactChild } from "react";
 import { Task } from "../../types/public-types";
-import { addToDate, getTodayXByTimeMode } from "../../helpers/date-helper";
+import { addToDate, getTodayXByTimeMode, getDateColumnWidthByViewMode } from "../../helpers/date-helper";
 import { calcRowTaskHeight, calcRowTaskY } from "../../helpers/bar-helper";
 import styles from "./grid.module.css";
 import {
@@ -12,7 +12,7 @@ import classnames from 'classnames'
 import { ViewMode } from "../../types/public-types";
 
 export type GridBodyProps = {
-  // viewMode: ViewMode;
+  viewMode?: ViewMode;
   tasks: Task[];
   dates: Date[];
   svgWidth: number;
@@ -26,11 +26,12 @@ export type GridBodyProps = {
   setGanttEvent: (value: GanttEvent) => void;
 };
 export const GridBody: React.FC<GridBodyProps> = ({
+  viewMode = ViewMode.Day,
   tasks,
   dates,
   // rowHeight,
   svgWidth,
-  columnWidth,
+  // columnWidth,
   // todayColor,
   // rtl,
   ganttFullHeight = 0,
@@ -138,7 +139,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
     //   )
     // }
 
-    tickX += columnWidth;
+    tickX += (getDateColumnWidthByViewMode(viewMode, date));
   }
   return (
     <g className="gridBody">
@@ -151,6 +152,7 @@ export const GridBody: React.FC<GridBodyProps> = ({
 };
 
 export const GridBodyToday: React.FC<GridBodyProps> = ({
+  viewMode = ViewMode.Day,
   tasks,
   dates,
   columnWidth,
@@ -189,7 +191,7 @@ export const GridBodyToday: React.FC<GridBodyProps> = ({
     ) {
       today = (
         <rect
-          x={tickX + getTodayXByTimeMode(ViewMode.Day)}
+          x={tickX + getTodayXByTimeMode(viewMode)}
           y={0}
           width={1}
           height={_y}
@@ -214,7 +216,7 @@ export const GridBodyToday: React.FC<GridBodyProps> = ({
         />
       );
     }
-    tickX += columnWidth;
+    tickX += (getDateColumnWidthByViewMode(viewMode, date));
   }
   return (
     <g className="today">{today}</g>

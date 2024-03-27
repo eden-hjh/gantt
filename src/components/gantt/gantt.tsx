@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { ViewMode, GanttProps, Task } from "../../types/public-types";
 import { GridProps } from "../grid/grid";
-import { ganttDateRange, seedDates } from "../../helpers/date-helper";
+import { ganttDateRange, seedDates, getDateColumnWidthByViewMode } from "../../helpers/date-helper";
 import { CalendarProps } from "../calendar/calendar";
 import { TaskGanttContentProps } from "./task-gantt-content";
 import { TaskListHeaderDefault } from "../task-list/task-list-header";
@@ -31,7 +31,7 @@ import '@kdcloudjs/kdesign/dist/kdesign.css'
 export const Gantt: React.FunctionComponent<GanttProps> = ({
   tasks,
   columns,
-  headerHeight = 88,
+  headerHeight: _headerHeight = 88,
   className,
   // columnWidth = 44,
   listCellWidth = "155px",
@@ -99,16 +99,24 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
   const [failedTask, setFailedTask] = useState<BarTask | null>(null);
   // const [hoverTask, setHoverTask] = useState<BarTask>();
 
+  let headerHeight = _headerHeight 
+
   let columnWidth = 44;
   if (viewMode === ViewMode.Year) {
     columnWidth = 365;
+    headerHeight = _headerHeight / 2
   } else if (viewMode === ViewMode.Month) {
     columnWidth = 248;
   } else if (viewMode === ViewMode.Week) {
     columnWidth = 168;
   }
 
-  const svgWidth = dateSetup.dates.length * columnWidth;
+  const svgWidth = useMemo(() => {
+    return dateSetup.dates.reduce((preCount, cur) => {
+      return preCount + getDateColumnWidthByViewMode(viewMode, cur)
+    }, 0)
+  }, [dateSetup.dates, viewMode]);
+
   const taskWidth = columns.reduce((count, pre) => {
     return (pre.width || 160) + count
   }, 0)
@@ -151,7 +159,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     if (rtl) {
       newDates = newDates.reverse();
       if (scrollX === -1) {
-        setScrollX(newDates.length * columnWidth);
+        setScrollX(svgWidth);
       }
     }
     setDateSetup({ dates: newDates, viewMode });
@@ -175,7 +183,8 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
         projectBackgroundColor,
         projectBackgroundSelectedColor,
         milestoneBackgroundColor,
-        milestoneBackgroundSelectedColor
+        milestoneBackgroundSelectedColor,
+        viewMode
       )
     );
   }, [
@@ -199,6 +208,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     milestoneBackgroundSelectedColor,
     rtl,
     scrollX,
+    svgWidth,
     onExpanderClick,
   ]);
 
@@ -468,7 +478,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     }
   };
   const gridProps: GridProps = {
-    // viewMode,
+    viewMode,
     ganttEvent,
     columnWidth,
     svgWidth,
@@ -486,6 +496,7 @@ export const Gantt: React.FunctionComponent<GanttProps> = ({
     viewMode,
     headerHeight,
     columnWidth,
+    svgWidth,
     fontFamily,
     fontSize,
     rtl,

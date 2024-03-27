@@ -3,26 +3,28 @@ import styles from "./calendar.module.css";
 
 type TopPartOfCalendarProps = {
   value: string;
-  x1Line: number;
-  y1Line: number;
-  y2Line: number;
-  xText: number;
-  yText: number;
+  x1Line?: number;
+  y1Line?: number;
+  y2Line?: number;
+  xText?: number;
+  yText?: number;
   hideLine?: boolean;
+  width?: number
 };
 
 export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
   value,
-  x1Line,
-  y1Line,
-  y2Line,
-  xText,
-  yText,
-  hideLine
+  // x1Line,
+  // y1Line,
+  // y2Line,
+  // xText,
+  // yText,
+  // hideLine,
+  width
 }) => {
   return (
-    <g className="calendarTop">
-      {
+    <div className={styles.calendarTop} style={{ width }}>
+      {/* {
         !hideLine && (
           <line
             x1={x1Line}
@@ -33,15 +35,16 @@ export const TopPartOfCalendar: React.FC<TopPartOfCalendarProps> = ({
             key={value + "line"}
           />
         )
-      }
-      <text
+      } */}
+      <div
         key={value + "text"}
-        y={yText}
-        x={xText}
+        // y={yText}
+        // x={xText}
         className={styles.calendarTopText}
+        // style={{ width, left: xText, top: yText  }}
       >
         {value}
-      </text>
-    </g>
+      </div>
+    </div>
   );
 };
